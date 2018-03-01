@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.RescueTeamMapper">
+
+
+	<select id="getAreas1" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT DISTINCT
+			  t3.areaid
+		FROM  admin_user t1,rescue_center t2,areas t3
+		WHERE t1.rescue_center_id=t2.rescue_center_id
+        AND   t2.rescue_city_code=t3.areaid
+		AND	  t1.user_id = ${userId}
+    </select>
+    
+	<select id="getAreas2" parameterType="java.lang.Long" resultType="java.lang.String">
+	    SELECT DISTINCT
+			  t3.areaid
+		FROM  admin_user t1,rescue_center t2,areas t3
+		WHERE t1.rescue_center_id=t2.rescue_center_id
+        AND   t2.rescue_city_code=t3.cityid
+		AND   t1.user_id = ${userId}
+    </select>
+    
+	<select id="getAreas3" parameterType="java.lang.Long" resultType="java.lang.String">
+	    SELECT DISTINCT
+			  t3.areaid
+		FROM  admin_user t1,rescue_center t2,areas t3,cities t4
+		WHERE t1.rescue_center_id=t2.rescue_center_id
+        AND   t3.cityid=t4.cityid
+        AND   t4.provinceid=t2.rescue_city_code
+		AND  t1.user_id = ${userId}
+    </select>
+     
+    
+    <select id="findCenterCode" parameterType="java.lang.Long" resultType="map">
+       SELECT
+		      r.rescue_city_code as rescueCityCode
+		FROM  admin_user a,rescue_center r
+		
+		WHERE a.rescue_center_id=r.rescue_center_id
+		AND   a.user_id=#{userId}
+    </select>
+</mapper>

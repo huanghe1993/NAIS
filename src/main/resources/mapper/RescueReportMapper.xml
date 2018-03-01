@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.RescueReportMapper">
+
+     <insert id="addHeartbeat" parameterType="com.anyikang.model.Heartbeat" >
+        INSERT INTO heartbeat_table
+              (device_id,
+               imei_code,
+               data_length,
+               function_code,
+               current_newtime,
+               crc8
+               )
+        VALUES
+              (#{id},
+               #{imeiCode},
+               #{dataLength},
+               #{functionCode},
+               #{time},
+               #{crc8}
+               )
+    </insert>
+  
+   <insert id="addLocationReport" parameterType="com.anyikang.model.vo.VoLocation" >  
+        INSERT INTO location
+              (locationId,
+               deviceId,
+               locationType,
+               locationLongitude,
+               locationLatitude,
+               locationSpeed,
+               locationDirection,
+               locationAltitude,
+               locationPower,
+               locationTime,
+               serverTime,
+               regionNumber
+               )
+        VALUES
+              (#{locationId},
+               #{deviceId},
+               #{locationType},
+               #{locationLongitude},
+               #{locationLatitude},
+               #{locationSpeed},
+               #{locationDirection},
+               #{locationAltitude},
+               #{locationElectricity},
+               #{locationTime},
+               #{serverTime},
+               #{regionNumber}
+               )
+     </insert>
+     
+    
+     
+</mapper>

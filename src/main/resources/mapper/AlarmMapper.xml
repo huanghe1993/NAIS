@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.AlarmMapper">
+
+    <!--
+    <resultMap id="alrmInfo" type="com.anyikang.model.Alarm">
+        <id column="alarmId" property="alarmId" />
+        <result column="alarmPower" property="alarmPower" />
+        <result column="alarmTime" property="alarmTime" />
+    </resultMap>
+    -->
+    <select id="findAlarmInfoByDeviceId" parameterType="java.lang.Integer" resultType="com.anyikang.model.Alarm">
+        SELECT * from alarm where deviceId=#{deviceId}
+    </select>
+
+    <!--查询报警信息-->
+    <select id="findAlarmByDeviceAndDateSection" parameterType="com.anyikang.model.AlarmCustom" resultType="com.anyikang.model.Alarm">
+          select * from alarm  where deviceId = #{deviceId} 
+          <if test="alarmType!=-1">
+	        and alarmType =#{alarmType}
+	      </if>
+          and alarmTime between #{startDate} and #{endDate} 
+          order by alarmId desc
+    </select>
+
+    <insert id="addAlarmMessage" parameterType="com.anyikang.model.Alarm">
+        INSERT INTO alarm
+             (alarmId,
+              locationId,
+              alarmType,
+              rescueType,
+              alarmPower,
+              alarmTime,
+              regionNumber
+              )
+        VALUES
+			(
+			#{alarmId},
+			#{locationId},
+			#{alarmType},
+			#{rescueType},
+			#{alarmPower},
+			#{alarmTime},
+			#{regionNumber}
+			)
+    </insert>
+    
+    <insert id="addAlarmTask" parameterType="com.anyikang.model.vo.RescueTask">
+         INSERT  INTO  rescue_task
+             (task_id,
+              addr,
+              alarmId,
+              status,
+              regionNumber,
+              createTime,
+              receiveTime)
+         VALUES(
+              #{taskId},
+              #{address},
+              #{alarmId},
+              #{status},
+              #{regionNumber},
+              #{createTime},
+              #{receiveTime}
+             )
+    </insert>
+    
+    <select id="findAlarmTast" parameterType="String" resultType="map">
+       SELECT
+			  r.task_id,
+			  r.`status`
+		from  rescue_task r,alarm a,device d,location l
+		where r.alarmId=a.alarmId
+        and   a.locationId=l.locationId
+        and   l.deviceId=d.deviceId
+        and   (r.`status`=1 OR r.`status`=2)
+		and   d.deviceIMEI=#{imeiCode}
+    </select>
+    
+    <select id="findAlarmByImei"  parameterType="String" resultType="map">
+           SELECT
+			      a.alarmId as alarmId
+			from  alarm a,device d,location l
+			WHERE a.locationId=l.locationId
+            and   l.deviceId=d.deviceId
+			and   a.rescueType=1
+			and   d.deviceIMEI=#{deviceIMEI}
+    </select>
+    
+    <select id="findRescueTeam"  parameterType="String" resultType="map">
+          SELECT 
+                rescue_team_id  AS  rescueTeamId
+          FROM  
+                rescue_team
+          WHERE 
+                addr=#{address}
+ 
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.RescueDeviceMapper">
+
+    <!--实时更新设备状态、设备报警信息、在线时间点  --> 
+    <update id="modifyDevice" parameterType="com.anyikang.model.vo.RescueDevice">
+        UPDATE 
+              device
+        SET
+        <if test="deviceStatus!=null">  
+              deviceStatus =#{deviceStatus},
+        </if> 
+        <if test="devicePower!=null">  
+              devicePower =#{devicePower},
+        </if> 
+              onlineTime =#{onlineTime}
+              
+        WHERE deviceIMEI=#{deviceIMEI}
+    </update>
+     <!--实时更新设备状态、设备报警信息、在线时间点  --> 
+    <update id="modifyDeviceOfBle" parameterType="com.anyikang.model.vo.RescueDevice">
+        UPDATE 
+              device
+        SET
+        <if test="deviceStatus!=null">  
+              deviceStatus =#{deviceStatus},
+        </if> 
+              onlineTime =#{onlineTime}
+              
+        WHERE deviceIMEI=#{deviceIMEI}
+    </update>
+    
+    <!--根据Imei号查询设备的Id号，以此作为定位信息的deviceId -->
+    
+    <select id="findDeviceByImei" parameterType="String" resultType="map">
+        SELECT 
+              deviceId
+             
+        FROM  device
+        
+        WHERE deviceIMEI =#{deviceIMEI}
+    
+    </select>
+      
+</mapper>

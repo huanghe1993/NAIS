@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <configuration>
+ 	<contextName>BLE-server LOG</contextName>
+    
+    <logger name="org.springframework.amqp.rabbit.listener.BlockingQueueConsumer" level="info"/>
+    <logger name="org.springframework.scheduling" level="info"/>
+	<logger name="org.apache.zookeeper.ClientCnxn" level="info"/>
+    <logger name="com.skplanet.impay" level="DEBUG"/>
+    <logger name="org.springframework.context" level="DEBUG"/>
+    
+    <property name="PROJECT_NAME" value="BLE-server" />
+    <property name="CHARSET" value="UTF-8" />
+    <property name="maxHistory" value="30" />
+    
+    <property name="STDOUT_LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n"/>
+    <property name="SQL_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+    
+    <property name="LOG_ADDRESS" value="/user_logs"/>
+    <property name="TRACE_FILE" value="trace/api_services_trace"/>
+    <property name="DEBUG_FILE" value="debug/api_services_debug"/>
+    <property name="INFO_FILE" value="info/api_services_info"/>
+    <property name="WARN_FILE" value="warn/api_services_warn"/>
+    <property name="ERROR_FILE" value="error/api_services_error"/>
+    <property name="SQL_FILE" value="mybatis/sql"/>
+    
+    
+    <!-- 控制台日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${STDOUT_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- trace日志   -->  
+    <appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    	<File>${LOG_ADDRESS}/${PROJECT_NAME}/${TRACE_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${TRACE_FILE}.%d{yyyy-MM-dd}</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>60</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>${LOG_PATTERN}</pattern>  
+            <charset>${CHARSET}</charset>
+        </encoder>  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>TRACE</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+    </appender>
+    
+     <!-- debug日志   -->  
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    	<File>${LOG_ADDRESS}/${PROJECT_NAME}/${DEBUG_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${DEBUG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>60</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>${LOG_PATTERN}</pattern>  
+            <charset>${CHARSET}</charset>
+        </encoder>  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>DEBUG</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+    </appender>  
+    
+     <!-- info日志   -->  
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    	<File>${LOG_ADDRESS}/${PROJECT_NAME}/${INFO_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${INFO_FILE}.%d{yyyy-MM-dd}</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>60</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>${LOG_PATTERN}</pattern>  
+            <charset>${CHARSET}</charset>
+        </encoder>  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>INFO</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+    </appender>  
+    
+     <!-- 出错日志  -->  
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+    	<File>${LOG_ADDRESS}/${PROJECT_NAME}/${ERROR_FILE}</File> 
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <!-- log.dir 在maven profile里配置 -->  
+            <fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${ERROR_FILE}.%d{yyyy-MM-dd}</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>60</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>${LOG_PATTERN}</pattern>  
+            <charset>${CHARSET}</charset>
+        </encoder>  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->  
+            <level>ERROR</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+    </appender>  
+    
+     <!-- 访问日志   -->  
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+    	<File>${LOG_ADDRESS}/${PROJECT_NAME}/${WARN_FILE}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${WARN_FILE}.%d{yyyy-MM-dd}</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>60</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>${LOG_PATTERN}</pattern>  
+            <charset>${CHARSET}</charset>
+        </encoder>  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->  
+            <level>WARN</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+    </appender>  
+    
+    
+    <!--日志打印的包的范围，及分类日志文件存储 -->  
+    <!-- <logger name="com.anyikang.test" additivity="false">  
+        <level value="DEBUG" />  
+        <appender-ref ref="STDOUT"/>  
+        <appender-ref ref="ERROR"/>  
+        <appender-ref ref="ACCESS"/>  
+        <appender-ref ref="INFO" />  
+    </logger>  --> 
+	
+	<appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_ADDRESS}/${PROJECT_NAME}/${SQL_FILE}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_ADDRESS}/${PROJECT_NAME}/${SQL_FILE}.%d{yyyy-MM-dd-HH}</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${SQL_LOG_PATTERN}</pattern>
+			<charset>${CHARSET}</charset>
+		</encoder>
+	</appender>
+	
+	<logger name="com.anyikang.dao.mapper" level="DEBUG">
+		<appender-ref ref="SQL" />
+	</logger>
+	
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="TRACE"/>
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="WARN"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+</configuration>

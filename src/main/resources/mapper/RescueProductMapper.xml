@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.RescueProductMapper">
+ 
+  <select id="findVersionUpdateTimes" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+		      COUNT(*) as number
+		FROM  product_version p
+		
+		WHERE p.version_device=#{versionDevice}
+  </select>
+  
+    <select id="findManualUpdateTimes" parameterType="String" resultType="java.lang.Integer">
+        SELECT
+		      COUNT(*) as number
+		FROM  product_manual p
+		
+		WHERE p.manual_device=#{manualDevice}
+  </select>
+  
+    <select id="findAgreementUpdateTimes" parameterType="String" resultType="java.lang.Integer">
+        SELECT
+		      COUNT(*) as number
+		FROM  product_service_agreement p
+		
+		WHERE p.agreement_device=#{agreementDevice}
+  </select>
+  <insert id="addProductVersion" parameterType="com.anyikang.model.ProductVersion">
+      INSERT INTO product_version
+	           (version_id,
+	            software_name,
+	            version_name,
+	            version_number,
+	            version_device,
+	            update_times,
+	            create_time,
+	            download_link,
+	            remark)
+       VALUES
+             ( #{versionId},
+               #{softwareName},
+               #{versionName},
+               #{versionNumber},
+               #{versionDevice},
+               #{updateTimes},
+               #{createTime},
+               #{downloadLink},
+               #{remark}
+              )
+  </insert> 
+  <select id="findVersion" resultType="map">
+        
+      SELECT
+	 			  p.version_id     as versionId,
+	              p.software_name  as softwareName,
+				  p.version_name   as versionName,
+				  p.version_number as versionNumber,
+				  p.update_times   as  updateTimes,
+				  p.download_link  as downloadLink,
+				  d.app_name       as versionDevice,
+				  p.remark         as remark,
+	              p.create_time    as  createTime
+	   FROM       app_kinds d,product_version p
+       JOIN       (SELECT   pv.version_device, MAX(pv.create_time) as time  FROM  product_version pv   GROUP BY pv.version_device  ) h
+       ON         p.version_device=h.version_device
+       WHERE      p.create_time=h.time
+       AND        d.app_id=p.version_device
+       group by   p.version_device
+       ORDER BY   p.create_time DESC
+  </select>
+  
+  <select id="findDownloadLink" resultType="java.lang.String">
+       SELECT
+		      p.download_link
+		
+		FROM  product_version p
+		
+		WHERE p.version_id=#{versionId}
+  </select>
+  <insert id="addManual" parameterType="com.anyikang.model.ProductManual">
+         INSERT INTO product_manual
+	           (manual_id,
+	            software_name,
+	            manual_name,
+	            manual_version,
+	            manual_device,
+	            manual_instructions,
+	            update_times,
+	            create_time,
+	            remark)
+       VALUES
+             ( #{manualId},
+               #{softwareName},
+               #{manualName},
+               #{manualVersion}, 
+               #{manualDevice},
+               #{manualInstructions},
+               #{updateTimes},
+               #{createTime},
+               #{remark}
+              )
+  </insert>
+  
+
+ 
+  <select id="findManual" resultType="com.anyikang.model.ProductManual">
+	      SELECT
+					 p.manual_id      as manualId,
+					 p.software_name  as softwareName,
+					 p.manual_name    as manualName,
+					 p.manual_version as manualVersion,
+					 p.update_times   as  updateTimes,
+					 d.app_name       as manualDevice,
+					 p.remark         as remark,
+					 p.manual_instructions as manualInstructions,
+		             p.create_time    as  createTime
+	      FROM       app_kinds d,product_manual p
+		  JOIN       (SELECT   pm.manual_device, MAX(pm.create_time) as time  FROM  product_manual pm   GROUP BY pm.manual_device  ) h
+	      ON         p.manual_device=h.manual_device
+	      WHERE      d.app_id=p.manual_device
+	      AND        p.create_time=h.time
+	      group by   p.manual_device
+	      ORDER BY   p.create_time DESC 
+		  
+  </select>
+  
+   <insert id="addAgreement" parameterType="com.anyikang.model.ProductAgreement">
+         INSERT INTO product_service_agreement
+	           (agreement_id,
+	            software_name,
+	            agreement_name,
+	            agreement_version,
+	            agreement_device,
+	            agreement_instructions,
+	            update_times,
+	            create_time,
+	            remark)
+       VALUES
+             ( #{agreementId},
+               #{softwareName},
+               #{agreementName},
+               #{agreementVersion}, 
+               #{agreementDevice},
+               #{agreementInstructions},
+               #{updateTimes},
+               #{createTime},
+               #{remark}
+              )
+  </insert>
+  
+   <select id="findAgreement" resultType="com.anyikang.model.ProductAgreement">
+	      SELECT
+					  p.agreement_id      as agreementId,
+					  p.software_name     as softwareName,
+					  p.agreement_name    as agreementName,
+					  p.agreement_version as agreementVersion,
+					  p.update_times      as updateTimes,
+					  d.app_name          as agreementDevice,
+					  p.remark            as remark,
+					  p.agreement_instructions as agreementInstructions,
+		              p.create_time       as  createTime
+		   FROM       app_kinds d,product_service_agreement p
+		   JOIN       (SELECT  ps.agreement_device, MAX(ps.create_time) as time  FROM  product_service_agreement ps GROUP BY ps.agreement_device) h
+	       ON         p.agreement_device=h.agreement_device
+	       WHERE      d.app_id=p.agreement_device     
+	       AND        p.create_time=h.time
+	       group by   p.agreement_device
+	       ORDER BY   p.create_time DESC 
+  </select>
+  
+  <select id="findAppKinds" resultType="map">
+         SELECT
+		        d.app_name as appName,
+		        d.app_id   as appId
+		  FROM  app_kinds d
+     </select>
+</mapper>
