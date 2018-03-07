@@ -36,4 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
 		return list;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.anyikang.service.PaymentService#modifypwById(int, java.lang.String)
+	 */
+	@Override
+	public boolean modifypwById(int userId, String newpw) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
