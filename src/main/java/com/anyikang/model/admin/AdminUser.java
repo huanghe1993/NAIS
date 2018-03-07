@@ -57,10 +57,6 @@ public class AdminUser implements  Serializable {
 	@TableField(exist = false)
 	private List<AdminRole> roleList;// 一个用户具有多个角色
 	
-	@TableField("rescue_center_id")
-	private String rescueTeamId;
-	
-    private String mobile;//电话
 
 
 
@@ -128,22 +124,6 @@ public class AdminUser implements  Serializable {
 		this.roleList = roleList;
 	}
 	
-	public String getRescueTeamId() {
-		return rescueTeamId;
-	}
-
-	public void setRescueTeamId(String rescueTeamId) {
-		this.rescueTeamId = rescueTeamId;
-	}
-	
-    
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
 
 
 	/*@Transient 不参与序列化*/

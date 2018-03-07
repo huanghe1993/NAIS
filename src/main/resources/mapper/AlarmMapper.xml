@@ -10,28 +10,28 @@
     </resultMap>
     -->
     <select id="findAlarmInfoByDeviceId" parameterType="java.lang.Integer" resultType="com.anyikang.model.Alarm">
-        SELECT * from alarm where deviceId=#{deviceId}
+        SELECT * from alarm where device_id=#{deviceId}
     </select>
 
     <!--查询报警信息-->
     <select id="findAlarmByDeviceAndDateSection" parameterType="com.anyikang.model.AlarmCustom" resultType="com.anyikang.model.Alarm">
-          select * from alarm  where deviceId = #{deviceId} 
+          select * from alarm  where device_id = #{deviceId} 
           <if test="alarmType!=-1">
-	        and alarmType =#{alarmType}
+	        and alarm_type =#{alarmType}
 	      </if>
-          and alarmTime between #{startDate} and #{endDate} 
+          and alarm_time between #{startDate} and #{endDate} 
           order by alarmId desc
     </select>
 
     <insert id="addAlarmMessage" parameterType="com.anyikang.model.Alarm">
         INSERT INTO alarm
-             (alarmId,
-              locationId,
-              alarmType,
-              rescueType,
-              alarmPower,
-              alarmTime,
-              regionNumber
+             (alarm_id,
+              location_id,
+              alarm_type,
+              rescue_type,
+              alarm_power,
+              alarm_time,
+              is_call
               )
         VALUES
 			(
@@ -41,7 +41,7 @@
 			#{rescueType},
 			#{alarmPower},
 			#{alarmTime},
-			#{regionNumber}
+			#{isCall}
 			)
     </insert>
     
@@ -49,11 +49,11 @@
          INSERT  INTO  rescue_task
              (task_id,
               addr,
-              alarmId,
+              alarm_id,
               status,
-              regionNumber,
-              createTime,
-              receiveTime)
+              region_number,
+              create_time,
+              receive_time)
          VALUES(
               #{taskId},
               #{address},
@@ -72,7 +72,7 @@
 		from  rescue_task r,alarm a,device d,location l
 		where r.alarmId=a.alarmId
         and   a.locationId=l.locationId
-        and   l.deviceId=d.deviceId
+        and   l.device_id=d.device_id
         and   (r.`status`=1 OR r.`status`=2)
 		and   d.deviceIMEI=#{imeiCode}
     </select>
@@ -96,5 +96,23 @@
                 addr=#{address}
  
     </select>
+    
+        <update id="updateRscueType" parameterType="String"> 
+            UPDATE
+                  alarm a 
+            SET   a.rescueType=2
+            WHERE a.alarmId=#{alarmId}
+    </update>
 
+   <select id="findAlarmTast" parameterType="map" resultType="map">
+       SELECT
+			  r.task_id,
+			  r.`status`
+		from  rescue_task r,alarm a,device d,location l
+		where r.alarmId=a.alarmId
+        and   a.locationId=l.locationId
+        and   l.deviceId=d.deviceId
+        and   (r.`status`=1 OR r.`status`=2)
+		and   d.deviceIMEI=#{imeiCode}
+    </select>
 </mapper>

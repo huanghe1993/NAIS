@@ -1,11 +1,11 @@
 package com.anyikang.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.anyikang.model.Alarm;
 import com.anyikang.model.AlarmCustom;
 import com.anyikang.model.vo.RescueTask;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 报警信息持久层
@@ -14,13 +14,7 @@ import java.util.Map;
  *
  */
 public interface AlarmMapper {
-
-    //根据设备的id查询出设备的电量和时间戳
-    public List<Alarm> findAlarmInfoByDeviceId(Integer deviceId);
-
-    //根据设备的id,报警的类型，起始的时间，终止的时间（包装类AlarmCustom)查询报警信息
-    public List<Alarm> findAlarmByDeviceAndDateSection(AlarmCustom alarmCustom);
-    
+   
     /**
      * 存储报警信息到数据库
      * @param al
@@ -54,4 +48,32 @@ public interface AlarmMapper {
 	 * @return
 	 */
 	public Map<String, Object> findRescueTeam(String address);
+	
+	/**
+	 * 修改任务状态
+	 * @param imeiCode
+	 * @return
+	 */
+	public int updateRscueType(String alarmId);
+	
+	/**
+	 * 是否已经创建救援任务
+	 * @param imeiCode
+	 * @return
+	 */
+	public Map<String, Object> findAlarmTast(Map<String, Object> map);
+
+	/**
+	 * 
+	 * @param deviceId
+	 * @return
+	 */
+	public List<Alarm> findAlarmInfoByDeviceId(Integer deviceId);
+
+	/**
+	 * 
+	 * @param alarmCustom
+	 * @return
+	 */
+	public List<Alarm> findAlarmByDeviceAndDateSection(AlarmCustom alarmCustom);
 }

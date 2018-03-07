@@ -30,16 +30,14 @@
         WHERE deviceIMEI=#{deviceIMEI}
     </update>
     
-    <!--根据Imei号查询设备的Id号，以此作为定位信息的deviceId -->
+     <!--根据Imei号查询设备的Id号，以此作为定位信息的deviceId -->
     
     <select id="findDeviceByImei" parameterType="String" resultType="map">
         SELECT 
-              deviceId
-             
+              device_id,
+              device_name
         FROM  device
-        
         WHERE deviceIMEI =#{deviceIMEI}
-    
     </select>
       
 </mapper>

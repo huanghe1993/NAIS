@@ -3,7 +3,6 @@ package com.anyikang.dao;
 
 import java.util.Map;
 
-import com.anyikang.model.Device;
 import com.anyikang.model.vo.RescueDevice;
 
 
@@ -18,7 +17,7 @@ public interface RescueDeviceMapper {
 	
 	
 	/**
-	 * 根据Imei号获取到设备表的主键值deviceId的值,作为报警信息、定位信息外键值
+	 * 判断设备是否存在
 	 * @param deviceIMEI
 	 * @return
 	 */

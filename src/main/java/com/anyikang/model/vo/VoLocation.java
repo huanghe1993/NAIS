@@ -1,6 +1,7 @@
 package com.anyikang.model.vo;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 紧急救助系统定位器定位上报信息实体类
@@ -18,9 +19,8 @@ public class VoLocation {
 	private float locationDirection;//方向
 	private float locationAltitude;//海拔
 	private int locationElectricity;//电量
-	private Timestamp locationTime;//定位时间
-	private Timestamp serverTime;//服务器时间
-	private String regionNumber;//区域码
+	private Date locationTime;//定位时间
+	private Date serverTime;//服务器时间
 	
 	public VoLocation(){
 		
@@ -28,7 +28,7 @@ public class VoLocation {
 
 	public VoLocation(String locationId, int deviceId, int locationType, float locationLongitude,
 			float locationLatitude, float locationSpeed, float locationDirection, float locationAltitude,
-			int locationElectricity, Timestamp locationTime, Timestamp serverTime, String regionNumber) {
+			int locationElectricity, Date locationTime, Date serverTime) {
 		super();
 		this.locationId = locationId;
 		this.deviceId = deviceId;
@@ -41,7 +41,6 @@ public class VoLocation {
 		this.locationElectricity = locationElectricity;
 		this.locationTime = locationTime;
 		this.serverTime = serverTime;
-		this.regionNumber = regionNumber;
 	}
 
 	public String getLocationId() {
@@ -116,28 +115,81 @@ public class VoLocation {
 		this.locationElectricity = locationElectricity;
 	}
 
-	public Timestamp getLocationTime() {
+	public Date getLocationTime() {
 		return locationTime;
 	}
 
-	public void setLocationTime(Timestamp locationTime) {
+	public void setLocationTime(Date locationTime) {
 		this.locationTime = locationTime;
 	}
 
-	public Timestamp getServerTime() {
+	public Date getServerTime() {
 		return serverTime;
 	}
 
-	public void setServerTime(Timestamp serverTime) {
+	public void setServerTime(Date serverTime) {
 		this.serverTime = serverTime;
 	}
 
-	public String getRegionNumber() {
-		return regionNumber;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + deviceId;
+		result = prime * result + Float.floatToIntBits(locationAltitude);
+		result = prime * result + Float.floatToIntBits(locationDirection);
+		result = prime * result + locationElectricity;
+		result = prime * result + ((locationId == null) ? 0 : locationId.hashCode());
+		result = prime * result + Float.floatToIntBits(locationLatitude);
+		result = prime * result + Float.floatToIntBits(locationLongitude);
+		result = prime * result + Float.floatToIntBits(locationSpeed);
+		result = prime * result + ((locationTime == null) ? 0 : locationTime.hashCode());
+		result = prime * result + locationType;
+		result = prime * result + ((serverTime == null) ? 0 : serverTime.hashCode());
+		return result;
 	}
 
-	public void setRegionNumber(String regionNumber) {
-		this.regionNumber = regionNumber;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VoLocation other = (VoLocation) obj;
+		if (deviceId != other.deviceId)
+			return false;
+		if (Float.floatToIntBits(locationAltitude) != Float.floatToIntBits(other.locationAltitude))
+			return false;
+		if (Float.floatToIntBits(locationDirection) != Float.floatToIntBits(other.locationDirection))
+			return false;
+		if (locationElectricity != other.locationElectricity)
+			return false;
+		if (locationId == null) {
+			if (other.locationId != null)
+				return false;
+		} else if (!locationId.equals(other.locationId))
+			return false;
+		if (Float.floatToIntBits(locationLatitude) != Float.floatToIntBits(other.locationLatitude))
+			return false;
+		if (Float.floatToIntBits(locationLongitude) != Float.floatToIntBits(other.locationLongitude))
+			return false;
+		if (Float.floatToIntBits(locationSpeed) != Float.floatToIntBits(other.locationSpeed))
+			return false;
+		if (locationTime == null) {
+			if (other.locationTime != null)
+				return false;
+		} else if (!locationTime.equals(other.locationTime))
+			return false;
+		if (locationType != other.locationType)
+			return false;
+		if (serverTime == null) {
+			if (other.serverTime != null)
+				return false;
+		} else if (!serverTime.equals(other.serverTime))
+			return false;
+		return true;
 	}
 
 	@Override
@@ -146,8 +198,7 @@ public class VoLocation {
 				+ ", locationLongitude=" + locationLongitude + ", locationLatitude=" + locationLatitude
 				+ ", locationSpeed=" + locationSpeed + ", locationDirection=" + locationDirection
 				+ ", locationAltitude=" + locationAltitude + ", locationElectricity=" + locationElectricity
-				+ ", locationTime=" + locationTime + ", serverTime=" + serverTime + ", regionNumber=" + regionNumber
-				+ "]";
+				+ ", locationTime=" + locationTime + ", serverTime=" + serverTime + "]";
 	}
 
 	

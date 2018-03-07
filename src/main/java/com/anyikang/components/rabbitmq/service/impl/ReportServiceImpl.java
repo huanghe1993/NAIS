@@ -5,16 +5,29 @@ package com.anyikang.components.rabbitmq.service.impl;
 
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anyikang.components.rabbitmq.service.ReportService;
+import com.anyikang.dao.AlarmMapper;
+import com.anyikang.dao.DeviceMapper;
 import com.anyikang.dao.RescueDeviceMapper;
+import com.anyikang.dao.RescueReportMapper;
+import com.anyikang.model.Alarm;
 import com.anyikang.model.vo.RescueDevice;
+import com.anyikang.model.vo.VoLocation;
 import com.anyikang.utils.DateUtil;
+import com.anyikang.utils.IEEE754Utils;
+import com.anyikang.utils.LngLat;
+import com.anyikang.utils.MapAPIUtil;
+import com.anyikang.utils.WifLbsUtil;
 
 
 
@@ -27,16 +40,20 @@ public class ReportServiceImpl implements ReportService {
 	
 	private Logger logger = Logger.getLogger(ReportServiceImpl.class);
 
-    
+    @Autowired
+    private AlarmMapper alarmMapper;
     
 	@Autowired
 	private RescueDeviceMapper rescueDeviceMapper;
+	
+	@Autowired
+	private RescueReportMapper reportMapper;
+	
+	@Autowired
+	private DeviceMapper deviceMapper;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#positioning(java.lang.String)
-	 */
+	
+
 	@Override
 	public boolean location(Map<String,Object> params) {
 		if(params==null||params.size()==0){
@@ -44,9 +61,171 @@ public class ReportServiceImpl implements ReportService {
 		}  
 		
 		updateDevice(params);//更新设备信息
-		return true;
-	}
-	
+		String imeiCode =params.get("imeiCode").toString();
+	    String gpsValid = params.get("gpsValid").toString();
+		
+	    //判断该设备是否存在
+  		Map<String,Object> deviceMap =rescueDeviceMapper.findDeviceByImei(imeiCode);
+  		if(deviceMap==null){
+  			return false;
+  		}
+  		VoLocation vo =new VoLocation();
+		vo.setDeviceId((int)deviceMap.get("deviceId"));
+		if(params.containsKey("reportTime")){
+			vo.setLocationTime(DateUtil.stringToDate(params.get("reportTime").toString()));
+		}
+		
+		if(params.containsKey("electricity")){
+			vo.setLocationElectricity(Integer.valueOf(params.get("electricity").toString()));
+		}
+		vo.setServerTime(new Date());
+		vo.setLocationId(UUID.randomUUID().toString());
+		
+		switch(gpsValid){
+		
+		case "A":
+			 vo.setLocationSpeed(Float.valueOf(params.get("speed").toString()));
+		     vo.setLocationAltitude(Float.valueOf(params.get("altitude").toString()));
+			 vo.setLocationDirection(Float.valueOf(params.get("direction").toString()));
+			 vo.setLocationType(1);
+			 vo.setLocationLatitude(IEEE754Utils.stringTofloat(Float.valueOf(params.get("latitude").toString())));
+			 vo.setLocationLongitude(IEEE754Utils.stringTofloat(Float.valueOf(params.get("longitude").toString())));
+			 break;
+		case "V":
+		    int wifi=0;
+		    int lbs=0;
+		    String [] macs=new String[]{};
+            String [] nearbts=new String[]{};
+            String bts=null;
+            String smac=null;
+		    if(params.containsKey("wifiNumber")){
+			   String wifiNumber =params.get("wifiNumber").toString();
+			   wifi =Integer.valueOf(wifiNumber);
+		    }
+		    if(params.containsKey("lbsStationNumber")){
+			   String lbsStationNumber =params.get("lbsStationNumber").toString();
+		       lbs =Integer.valueOf(lbsStationNumber);
+		    }
+		    if(wifi>0&&lbs>0){
+				@SuppressWarnings("unchecked")
+				List<String> wifiList =(List<String>) params.get("wifi");
+				@SuppressWarnings("unchecked")
+				List<String> lbsList =(List<String>) params.get("lbs");
+				smac=wifiList.get(0);
+				bts =lbsList.get(0);
+				wifiList.remove(0);
+				lbsList.remove(0);
+				macs =(String[]) wifiList.toArray(new String[wifiList.size()]);
+				nearbts =(String[]) lbsList.toArray(new String[lbsList.size()]);				
+				vo.setLocationType(4);
+			}else if(wifi>0&&lbs==0){
+				System.err.println("=======wifi转换坐标========");
+				@SuppressWarnings("unchecked")
+				List<String> wifiList =(List<String>) params.get("wifi");
+				smac=wifiList.get(0);
+				wifiList.remove(0);
+				macs =(String[]) wifiList.toArray(new String[wifiList.size()]);
+				vo.setLocationType(2);
+			}else if(wifi==0&&lbs>0){
+				System.err.println("=======lbs转换坐标========");
+				@SuppressWarnings("unchecked")
+				List<String> lbsList =(List<String>) params.get("lbs");
+				bts =lbsList.get(0);
+				lbsList.remove(0);
+				nearbts =(String[]) lbsList.toArray(new String[lbsList.size()]);
+				vo.setLocationType(3);
+			}
+			LngLat gps = WifLbsUtil.gaodeMixture_to_bd09(0, imeiCode, smac, 0, bts, nearbts, macs);
+			vo.setLocationLatitude((float)gps.getLantitude());
+			vo.setLocationLongitude((float)gps.getLongitude());
+			break;
+		default:
+			logger.info("============存储失败，无数据=============");
+			return false;
+    }
+
+		if(vo.getLocationLatitude()==0||vo.getLocationLongitude()==0){
+			return false;
+		}
+		
+		//1.经纬度反查区域码
+		Map<String,String> maps = MapAPIUtil.toAddr(vo.getLocationLatitude(), vo.getLocationLongitude());
+	    String formatted_address = maps.get("formatted_address").toString();
+	    System.err.println("========"+formatted_address+"==========");
+	     
+		//2.保存定位数据
+		reportMapper.addLocationReport(vo);
+
+		//3.处理上报报警的方法
+		if(params.containsKey("deviceStatus")){
+			String deviceStatus =Integer.toBinaryString(Integer.parseInt(params.get("deviceStatus").toString(), 16));
+			while(deviceStatus.length()<8){
+				deviceStatus ="0"+deviceStatus;	
+			}
+			System.err.println(deviceStatus);
+			char [] strs =deviceStatus.toCharArray();
+			Alarm al = new Alarm();//报警信息
+			al.setAlarmTime(vo.getLocationTime());
+			al.setAlarmPower(vo.getLocationElectricity());
+			al.setLocationId(vo.getLocationId());
+			if(strs[5]=='1'){
+				al.setAlarmType(2);
+				al.setRescueType(0);
+				al.setIsCall(0);
+				al.setAlarmId(UUID.randomUUID().toString());
+			    int n =alarmMapper.addAlarmMessage(al);
+				if(n==1){
+				   System.err.println("==============保存报警信息(电量低2)================");
+		        }
+			}
+			if(strs[6]=='0'&&strs[7]=='1'){
+				al.setAlarmType(1);
+				al.setRescueType(1);
+				al.setAlarmId(UUID.randomUUID().toString());
+				al.setIsCall(1);
+		        int n =alarmMapper.addAlarmMessage(al);
+				if(n==1){
+				   System.err.println("==============保存报警信息(发生意外1)================");
+		        }
+			}
+			//查询蓝牙状态
+			int  bluetoothStatus = deviceMapper.findBluetoothStatus(imeiCode);
+			if(strs[1]=='1'){
+				if(bluetoothStatus==1){
+					System.err.println("=======蓝牙状态无变化=======");
+				}else{
+					al.setAlarmType(3);
+					al.setRescueType(0);
+					al.setAlarmId(UUID.randomUUID().toString());
+					al.setIsCall(0);
+			        int n =alarmMapper.addAlarmMessage(al);
+					if(n==1){
+						//修改蓝牙状态为1(1为断开,0为正常)
+			    		Map<String,Object> param=new HashMap<>();
+			    		param.put("bluetoothStatus", 1);
+			    		param.put("deviceIMEI", imeiCode);
+			    		deviceMapper.updateBluetoothStatus(param);
+					   System.err.println("==============保存蓝牙断开报警信息(蓝牙断开1)================");
+			        }
+				}
+				
+			}
+			if(strs[1]=='0'){
+				if(bluetoothStatus==0){
+					System.err.println("=======蓝牙状态无变化=======");
+				}else{
+					//修改蓝牙状态为0(1为断开,0为正常)
+		    		Map<String,Object> param=new HashMap<>();
+		    		param.put("bluetoothStatus", 0);
+		    		param.put("deviceIMEI", imeiCode);
+		    		deviceMapper.updateBluetoothStatus(param);
+				   System.err.println("==============蓝牙正常连接(蓝牙连接2)================");
+				}
+			}
+		}
+	    return true;
+  }
+
 	
 	/**
      * 更新设备信息业务
@@ -61,20 +240,12 @@ public class ReportServiceImpl implements ReportService {
 			}
 			device.setDeviceStatus(deviceStatus);
 		}
-		if(params.containsKey("dateTime")){
-			String reportTime = params.get("dateTime").toString();	
-		    device.setOnlineTime(DateUtil.addEnight(reportTime));
-		}
 		if(params.containsKey("imeiCode")){
 			device.setDeviceIMEI(params.get("imeiCode").toString());
 		}
 		if(params.containsKey("reportTime")){
 			String reportTime = params.get("reportTime").toString();
-			device.setOnlineTime(DateUtil.stringToTimestamp(reportTime));
-		}
-		
-		if(params.containsKey("electricity")){
-			device.setDevicePower(Integer.parseInt(params.get("electricity").toString()));
+			device.setOnlineTime(DateUtil.stringToDate(reportTime));
 		}
 		if(params.containsKey("power")){
 			device.setDevicePower(Integer.valueOf(params.get("power").toString(), 16));
@@ -87,33 +258,6 @@ public class ReportServiceImpl implements ReportService {
 		}
 		System.err.println("==============更新设备信息================");
 	}	
-	
-	
-	
-	
-	
-	
-
-	@Override
-	public boolean heart(Map<String, Object> params) {
-		
-		if(params==null){
-			return false;
-		}
-		RescueDevice device = new RescueDevice();
-		if(params.containsKey("imeiCode")){
-			device.setDeviceIMEI(params.get("imeiCode").toString());
-		}
-		if(params.containsKey("electricity")){
-			device.setDevicePower(Integer.parseInt(params.get("electricity").toString()));
-		}
-		device.setOnlineTime(new Timestamp(System.currentTimeMillis()));
-		rescueDeviceMapper.modifyDevice(device);
-		System.err.println("==============保存心跳信息================");
-		return true;
-		
-	}
-	
 	
 	@Override
 	public boolean heartOfBLE(Map<String, Object> params) {
@@ -129,69 +273,6 @@ public class ReportServiceImpl implements ReportService {
 		System.err.println("==============保存心跳信息================");
 		return true;
 		
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#exercise(java.lang.String)
-	 */
-	@Override
-	public boolean exercise(Map<String,Object> params) {
-		// TODO Auto-generated method stub
-		System.err.println("==============保存运动信息================");
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#heartRate(java.lang.String)
-	 */
-	@Override
-	public boolean heartRate(Map<String,Object> params) {
-		// TODO Auto-generated method stub
-		System.err.println("==============保存心率信息================");
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#bloodOxygen(java.lang.String)
-	 */
-	@Override
-	public boolean bloodOxygen(Map<String,Object> params) {
-		// TODO Auto-generated method stub
-		System.err.println("==============保存血氧信息================");
-		System.err.println("=====imeiCode:"+params.get("imeiCode"));
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#bloodPressure(java.lang.String)
-	 */
-	@Override
-	public boolean bloodPressure(Map<String,Object> params) {
-		// TODO Auto-generated method stub
-		System.err.println("==============保存血压信息================");
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.anyikang.service.ReportService#sleep(java.lang.String)
-	 */
-	@Override
-	public boolean sleep(Map<String,Object> params) {
-		// TODO Auto-generated method stub
-		
-		System.err.println("==============保存睡眠信息================");
-		return true;
 	}
 
 

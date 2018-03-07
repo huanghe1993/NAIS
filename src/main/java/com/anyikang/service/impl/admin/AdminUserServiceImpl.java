@@ -64,10 +64,8 @@ public class AdminUserServiceImpl  extends ServiceImpl<AdminUserMapper, AdminUse
         adminUser.setUserPassword(md5Hash.toString());
 //        adminUser.setUserPassword(userVo.getUserPassword());
         adminUser.setNickName(userVo.getNickName());
-        adminUser.setRescueTeamId(userVo.getRescueTeamId());
         adminUser.setUserStatus(true);
         adminUser.setCreateTime(new Date());
-        adminUser.setMobile(userVo.getMobile());
 
         int result = baseMapper.insert(adminUser);
         if(StringUtils.isNotEmpty(userVo.getRoleId())){
@@ -94,8 +92,6 @@ public class AdminUserServiceImpl  extends ServiceImpl<AdminUserMapper, AdminUse
         adminUser.setNickName(userVo.getNickName());
         adminUser.setCreateTime(new Date());
         adminUser.setUserId(userVo.getUsersId());
-        adminUser.setRescueTeamId(userVo.getRescueTeamId());
-        adminUser.setMobile(userVo.getMobile());
 
         int result = baseMapper.updateById(adminUser);
         if(StringUtils.isNotEmpty(userVo.getOriginalRoleId()) ){

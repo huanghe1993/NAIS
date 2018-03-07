@@ -1,6 +1,5 @@
 package com.anyikang.controller.web;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
-import com.anyikang.model.Device;
-import com.anyikang.model.RescueCount;
 import com.anyikang.model.vo.LocatorDeviceMessage;
 import com.anyikang.model.vo.LocatorDeviceStatus;
-import com.anyikang.model.vo.RescueDevice;
 import com.anyikang.service.DeviceService;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
@@ -38,42 +34,6 @@ public class RescueDeviceController extends BaseController{
 	@Autowired
     private DeviceService deviceService;
 
-	    
-
-	
-	/**
- 	 * 设置佩戴者信息(添加或者修改)
- 	 * @param request
- 	 * @return
- 	 */
- 	@RequestMapping(value ="device/addDevice", method = RequestMethod.POST)
- 	public BaseResponse<?> addDevice(String tokenId,String deviceName,int deviceType,String deviceIMEI) {
- 		BaseResponse<String> baseResponse = new BaseResponse<>();
- 		baseResponse.setTime(System.currentTimeMillis());
- 	    Device device = deviceService.findByDeviceNumber(deviceIMEI);
- 	    if(device != null){
- 	    	baseResponse.setStatus(0);
- 			baseResponse.setMsg("该设备已存在");
- 			return baseResponse;
- 	    }
- 	    
- 	    //如果设备不存在,创建设备
-    	RescueDevice addDevice = new RescueDevice();
-    	addDevice.setDeviceCreateTime(new Timestamp(System.currentTimeMillis()));
-    	addDevice.setDeviceType(deviceType);
-    	addDevice.setDeviceIMEI(deviceIMEI);
-    	addDevice.setDeviceName(deviceName);
-    	boolean flag =deviceService.addDevice(addDevice);
-    	if(flag){
-    		baseResponse.setStatus(1);
- 			baseResponse.setMsg("设备添加成功");
- 			return baseResponse;
-    	}
-    	baseResponse.setStatus(0);
-		baseResponse.setMsg("设备添加失败");
-		return baseResponse;
-		
-	}
 
 
  	/**
@@ -270,59 +230,34 @@ public class RescueDeviceController extends BaseController{
     
     
     /**
-     * 救援统计(第1阶) 
-     * @param rescueTeamId
-     * @param pageIndex
-     * @param pageSize
+     * 查询当前设备所有轨迹信息
+     * @param imeiCode
+     * @param startTime
+     * @param endTime
      * @return
      */
-	@GetMapping("query/rescueCount")
-    public BaseResponse<?> rescueCount(int pageIndex,int pageSize,String tokenId) {
-    	
-		BaseResponse<PageInfo<List<RescueCount>>> responseMessage = new BaseResponse<>();
-		PageMethod.startPage(pageIndex, pageSize);
-		Integer userId = Integer.valueOf(tokenId.split("==")[1]);
-		@SuppressWarnings("unchecked")
-		PageInfo<List<RescueCount>> pageInfo= page(deviceService.rescueCount(userId));
-		if(pageInfo==null){
-			responseMessage.setMsg("查询失败");
-			responseMessage.setStatus(0);
-			return responseMessage;
-		}
-		responseMessage.setData(pageInfo);
-		responseMessage.setMsg("查询成功");
+    @GetMapping("query/alarmRecord")
+    public BaseResponse<?> queryAlarmRecord(int pageIndex, int pageSize,String deviceIMEI) {
+    	BaseResponse<PageInfo<List<Map<String,Object>>>> responseMessage = new BaseResponse<>();
+    	PageMethod.startPage(pageIndex, pageSize);
+    	@SuppressWarnings("unchecked")
+		PageInfo<List<Map<String,Object>>> list =page(deviceService.queryAlarmRecord(deviceIMEI));
+    	if(list==null){
+    		responseMessage.setMsg("无报警信息");
+    		responseMessage.setStatus(0);
+    		return responseMessage;
+    	}
+    	if(list.getList()==null||list.getList().size()==0){
+    		responseMessage.setMsg("无报警信息");
+    		responseMessage.setStatus(0);
+    		return responseMessage;
+    	}
+    	responseMessage.setMsg("查询成功");
 		responseMessage.setStatus(1);
-		return responseMessage;
- 
+    	responseMessage.setData(list);
+        return responseMessage;
     }
     
-	/**
-	 * 救援统计(第二、三阶) 按ID查询
-	 * @param pageIndex
-	 * @param pageSize
-	 * @param tokenId
-	 * @param rescueCenterId
-	 * @return
-	 */
-	@GetMapping("query/rescueCount/rescueCenterId")
-    public BaseResponse<?> rescueCenterId(int pageIndex,int pageSize,String tokenId,String rescueCenterId) {
-    	
-		BaseResponse<PageInfo<List<RescueCount>>> responseMessage = new BaseResponse<>();
-		PageMethod.startPage(pageIndex, pageSize);
-
-		@SuppressWarnings("unchecked")
-		PageInfo<List<RescueCount>> pageInfo= page(deviceService.rescueCenterId(rescueCenterId));
-		if(pageInfo==null){
-			responseMessage.setMsg("查询失败");
-			responseMessage.setStatus(0);
-			return responseMessage;
-		}
-		responseMessage.setData(pageInfo);
-		responseMessage.setMsg("查询成功");
-		responseMessage.setStatus(1);
-		return responseMessage;
- 
-    }
 	
 	
 }

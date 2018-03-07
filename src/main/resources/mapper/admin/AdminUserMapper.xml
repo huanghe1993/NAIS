@@ -21,7 +21,6 @@
 		<result column="create_time" property="createTime" />
 		<result column="user_status" property="userStatus" />
 		<result column="department_id" property="departmentId" />
-		<result column="rescue_center_id" property="rescueTeamId" />
 		<!--当表之间的关系是一对多时，用 collection-->
 		<collection property="roleList" ofType="com.anyikang.model.admin.AdminRole" column="user_id" select="queryUserRole" />
 	</resultMap>

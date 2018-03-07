@@ -2,6 +2,8 @@ package com.anyikang.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +109,30 @@ public class HttpUtil {
             get.abort();
             client.getConnectionManager().shutdown();
         }
+    }
+    
+    /**
+     * 针对请求url地址中有特殊字符的方式
+     * @param specificURL
+     * @return
+     * @throws Exception
+     */
+    public static String getSpecificURL(String specificURL) throws Exception{
+    	URL url = new URL(specificURL);
+		URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
+    	
+    	CloseableHttpClient client = HttpClients.createDefault();
+    	
+    	HttpGet get = new HttpGet(uri);
+    	try {
+    		HttpResponse resonse = client.execute(get);
+    		return entityToString(resonse);
+    	} catch (Exception exception) {
+    		throw exception;
+    	} finally {
+    		get.abort();
+    		client.getConnectionManager().shutdown();
+    	}
     }
 
     public static String entityToString(HttpResponse resonse) throws Exception{

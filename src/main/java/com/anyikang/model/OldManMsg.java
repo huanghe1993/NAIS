@@ -1,5 +1,7 @@
 package com.anyikang.model;
 
+import java.util.Date;
+
 public class OldManMsg {
 
 	private String oldManId;
@@ -7,27 +9,27 @@ public class OldManMsg {
 	private String surname;
 	private String name;
 	private int sex;
-	private String imageUrl;
 	private int age;
 	private String mobile;
 	private String address;
+	private Date createTime;
 	
 	public OldManMsg(){
 		
 	}
 
-	public OldManMsg(String oldManId, int deviceId, String surname, String name, int sex, String imageUrl, int age,
-			String mobile, String address) {
+	public OldManMsg(String oldManId, int deviceId, String surname, String name, int sex, int age, String mobile,
+			String address, Date createTime) {
 		super();
 		this.oldManId = oldManId;
 		this.deviceId = deviceId;
 		this.surname = surname;
 		this.name = name;
 		this.sex = sex;
-		this.imageUrl = imageUrl;
 		this.age = age;
 		this.mobile = mobile;
 		this.address = address;
+		this.createTime = createTime;
 	}
 
 	public String getOldManId() {
@@ -70,14 +72,6 @@ public class OldManMsg {
 		this.sex = sex;
 	}
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
 	public int getAge() {
 		return age;
 	}
@@ -102,76 +96,14 @@ public class OldManMsg {
 		this.address = address;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
-		result = prime * result + age;
-		result = prime * result + deviceId;
-		result = prime * result + ((imageUrl == null) ? 0 : imageUrl.hashCode());
-		result = prime * result + ((mobile == null) ? 0 : mobile.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((oldManId == null) ? 0 : oldManId.hashCode());
-		result = prime * result + sex;
-		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-		return result;
+	public Date getCreateTime() {
+		return createTime;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OldManMsg other = (OldManMsg) obj;
-		if (address == null) {
-			if (other.address != null)
-				return false;
-		} else if (!address.equals(other.address))
-			return false;
-		if (age != other.age)
-			return false;
-		if (deviceId != other.deviceId)
-			return false;
-		if (imageUrl == null) {
-			if (other.imageUrl != null)
-				return false;
-		} else if (!imageUrl.equals(other.imageUrl))
-			return false;
-		if (mobile == null) {
-			if (other.mobile != null)
-				return false;
-		} else if (!mobile.equals(other.mobile))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (oldManId == null) {
-			if (other.oldManId != null)
-				return false;
-		} else if (!oldManId.equals(other.oldManId))
-			return false;
-		if (sex != other.sex)
-			return false;
-		if (surname == null) {
-			if (other.surname != null)
-				return false;
-		} else if (!surname.equals(other.surname))
-			return false;
-		return true;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
-	@Override
-	public String toString() {
-		return "OldManMsg [oldManId=" + oldManId + ", deviceId=" + deviceId + ", surname=" + surname + ", name=" + name
-				+ ", sex=" + sex + ", imageUrl=" + imageUrl + ", age=" + age + ", mobile=" + mobile + ", address="
-				+ address + "]";
-	}
 	
 	
 }

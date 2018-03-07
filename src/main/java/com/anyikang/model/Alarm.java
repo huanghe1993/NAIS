@@ -1,6 +1,7 @@
 package com.anyikang.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 报警信息实体类
@@ -14,15 +15,15 @@ public class Alarm {
     public int alarmType;
     public int rescueType;
     public int alarmPower;
-    public Timestamp alarmTime;
-    public String regionNumber;//报警地区编码
+    public Date alarmTime;
+    public int isCall;//是否给家属打电话
 
     public Alarm() {
        
     }
 
-	public Alarm(String alarmId, String locationId, int alarmType, int rescueType, int alarmPower, Timestamp alarmTime,
-			String regionNumber) {
+	public Alarm(String alarmId, String locationId, int alarmType, int rescueType, int alarmPower, Date alarmTime,
+			int isCall) {
 		super();
 		this.alarmId = alarmId;
 		this.locationId = locationId;
@@ -30,7 +31,7 @@ public class Alarm {
 		this.rescueType = rescueType;
 		this.alarmPower = alarmPower;
 		this.alarmTime = alarmTime;
-		this.regionNumber = regionNumber;
+		this.isCall = isCall;
 	}
 
 	public String getAlarmId() {
@@ -73,20 +74,20 @@ public class Alarm {
 		this.alarmPower = alarmPower;
 	}
 
-	public Timestamp getAlarmTime() {
+	public Date getAlarmTime() {
 		return alarmTime;
 	}
 
-	public void setAlarmTime(Timestamp alarmTime) {
+	public void setAlarmTime(Date alarmTime) {
 		this.alarmTime = alarmTime;
 	}
 
-	public String getRegionNumber() {
-		return regionNumber;
+	public int getIsCall() {
+		return isCall;
 	}
 
-	public void setRegionNumber(String regionNumber) {
-		this.regionNumber = regionNumber;
+	public void setIsCall(int isCall) {
+		this.isCall = isCall;
 	}
 
 	@Override
@@ -97,8 +98,8 @@ public class Alarm {
 		result = prime * result + alarmPower;
 		result = prime * result + ((alarmTime == null) ? 0 : alarmTime.hashCode());
 		result = prime * result + alarmType;
+		result = prime * result + isCall;
 		result = prime * result + ((locationId == null) ? 0 : locationId.hashCode());
-		result = prime * result + ((regionNumber == null) ? 0 : regionNumber.hashCode());
 		result = prime * result + rescueType;
 		return result;
 	}
@@ -126,15 +127,12 @@ public class Alarm {
 			return false;
 		if (alarmType != other.alarmType)
 			return false;
+		if (isCall != other.isCall)
+			return false;
 		if (locationId == null) {
 			if (other.locationId != null)
 				return false;
 		} else if (!locationId.equals(other.locationId))
-			return false;
-		if (regionNumber == null) {
-			if (other.regionNumber != null)
-				return false;
-		} else if (!regionNumber.equals(other.regionNumber))
 			return false;
 		if (rescueType != other.rescueType)
 			return false;
@@ -144,8 +142,7 @@ public class Alarm {
 	@Override
 	public String toString() {
 		return "Alarm [alarmId=" + alarmId + ", locationId=" + locationId + ", alarmType=" + alarmType + ", rescueType="
-				+ rescueType + ", alarmPower=" + alarmPower + ", alarmTime=" + alarmTime + ", regionNumber="
-				+ regionNumber + "]";
+				+ rescueType + ", alarmPower=" + alarmPower + ", alarmTime=" + alarmTime + ", isCall=" + isCall + "]";
 	}
 
 	

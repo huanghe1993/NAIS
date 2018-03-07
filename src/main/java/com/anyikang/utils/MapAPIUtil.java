@@ -422,7 +422,7 @@ public class MapAPIUtil {
 		StringBuffer sb=new StringBuffer(GEOCODER_URL);
 		sb.append("?ak=").append(AK);
 		sb.append("&mcode=").append(MCODE);
-		sb.append("&coordtype=").append("wgs84ll");//bd09ll（百度经纬度坐标）、bd09mc（百度米制坐标）、gcj02ll（国测局经纬度坐标）、wgs84ll（ GPS经纬度）
+		sb.append("&coordtype=").append("bd09ll");//bd09ll（百度经纬度坐标）、bd09mc（百度米制坐标）、gcj02ll（国测局经纬度坐标）、wgs84ll（ GPS经纬度）
 		sb.append("&location=").append(lat).append(",").append(lng);
 		sb.append("&output=").append("json");
 		

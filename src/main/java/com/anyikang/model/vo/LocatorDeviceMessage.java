@@ -14,81 +14,72 @@ public class LocatorDeviceMessage {
 	private String deviceImei;//设备Imei号
 	private String deviceUserName;//设备使用者
 	private String devicePhone;//设备手机号
-	private int    timeInterval;//定位频率
 	private String familyPhones;//亲情号
-	private String railName;//电子围栏名称
 
 	
 	public LocatorDeviceMessage(){
 		
 	}
 
+
 	public LocatorDeviceMessage(int deviceId, String deviceImei, String deviceUserName, String devicePhone,
-			int timeInterval, String familyPhones, String railName) {
+			String familyPhones) {
 		super();
 		this.deviceId = deviceId;
 		this.deviceImei = deviceImei;
 		this.deviceUserName = deviceUserName;
 		this.devicePhone = devicePhone;
-		this.timeInterval = timeInterval;
 		this.familyPhones = familyPhones;
-		this.railName = railName;
 	}
+
 
 	public int getDeviceId() {
 		return deviceId;
 	}
 
+
 	public void setDeviceId(int deviceId) {
 		this.deviceId = deviceId;
 	}
+
 
 	public String getDeviceImei() {
 		return deviceImei;
 	}
 
+
 	public void setDeviceImei(String deviceImei) {
 		this.deviceImei = deviceImei;
 	}
+
 
 	public String getDeviceUserName() {
 		return deviceUserName;
 	}
 
+
 	public void setDeviceUserName(String deviceUserName) {
 		this.deviceUserName = deviceUserName;
 	}
+
 
 	public String getDevicePhone() {
 		return devicePhone;
 	}
 
+
 	public void setDevicePhone(String devicePhone) {
 		this.devicePhone = devicePhone;
 	}
 
-	public int getTimeInterval() {
-		return timeInterval;
-	}
-
-	public void setTimeInterval(int timeInterval) {
-		this.timeInterval = timeInterval;
-	}
 
 	public String getFamilyPhones() {
 		return familyPhones;
 	}
 
+
 	public void setFamilyPhones(String familyPhones) {
 		this.familyPhones = familyPhones;
-	}
-
-	public String getRailName() {
-		return railName;
-	}
-
-	public void setRailName(String railName) {
-		this.railName = railName;
 	}
 
 
@@ -101,10 +92,9 @@ public class LocatorDeviceMessage {
 		result = prime * result + ((devicePhone == null) ? 0 : devicePhone.hashCode());
 		result = prime * result + ((deviceUserName == null) ? 0 : deviceUserName.hashCode());
 		result = prime * result + ((familyPhones == null) ? 0 : familyPhones.hashCode());
-		result = prime * result + ((railName == null) ? 0 : railName.hashCode());
-		result = prime * result + timeInterval;
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -137,21 +127,14 @@ public class LocatorDeviceMessage {
 				return false;
 		} else if (!familyPhones.equals(other.familyPhones))
 			return false;
-		if (railName == null) {
-			if (other.railName != null)
-				return false;
-		} else if (!railName.equals(other.railName))
-			return false;
-		if (timeInterval != other.timeInterval)
-			return false;
 		return true;
 	}
+
 
 	@Override
 	public String toString() {
 		return "LocatorDeviceMessage [deviceId=" + deviceId + ", deviceImei=" + deviceImei + ", deviceUserName="
-				+ deviceUserName + ", devicePhone=" + devicePhone + ", timeInterval=" + timeInterval + ", familyPhones="
-				+ familyPhones + ", railName=" + railName + "]";
+				+ deviceUserName + ", devicePhone=" + devicePhone + ", familyPhones=" + familyPhones + "]";
 	}
 
 	

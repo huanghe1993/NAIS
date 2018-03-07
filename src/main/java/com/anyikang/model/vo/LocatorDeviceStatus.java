@@ -9,23 +9,20 @@ package com.anyikang.model.vo;
 public class LocatorDeviceStatus {
 
 	private String  deviceIMEI;
-    private String  deviceStatus;
+    private String  bluetoothStatus;
     private String  deviceMobile;
     private int     locationPower;
-    private String  onlineTime;
     
     public LocatorDeviceStatus(){
     	
     }
 
-	public LocatorDeviceStatus(String deviceIMEI, String deviceStatus, String deviceMobile, int locationPower,
-			String onlineTime) {
+	public LocatorDeviceStatus(String deviceIMEI, String bluetoothStatus, String deviceMobile, int locationPower) {
 		super();
 		this.deviceIMEI = deviceIMEI;
-		this.deviceStatus = deviceStatus;
+		this.bluetoothStatus = bluetoothStatus;
 		this.deviceMobile = deviceMobile;
 		this.locationPower = locationPower;
-		this.onlineTime = onlineTime;
 	}
 
 	public String getDeviceIMEI() {
@@ -36,12 +33,12 @@ public class LocatorDeviceStatus {
 		this.deviceIMEI = deviceIMEI;
 	}
 
-	public String getDeviceStatus() {
-		return deviceStatus;
+	public String getBluetoothStatus() {
+		return bluetoothStatus;
 	}
 
-	public void setDeviceStatus(String deviceStatus) {
-		this.deviceStatus = deviceStatus;
+	public void setBluetoothStatus(String bluetoothStatus) {
+		this.bluetoothStatus = bluetoothStatus;
 	}
 
 	public String getDeviceMobile() {
@@ -60,23 +57,14 @@ public class LocatorDeviceStatus {
 		this.locationPower = locationPower;
 	}
 
-	public String getOnlineTime() {
-		return onlineTime;
-	}
-
-	public void setOnlineTime(String onlineTime) {
-		this.onlineTime = onlineTime;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((bluetoothStatus == null) ? 0 : bluetoothStatus.hashCode());
 		result = prime * result + ((deviceIMEI == null) ? 0 : deviceIMEI.hashCode());
 		result = prime * result + ((deviceMobile == null) ? 0 : deviceMobile.hashCode());
-		result = prime * result + ((deviceStatus == null) ? 0 : deviceStatus.hashCode());
 		result = prime * result + locationPower;
-		result = prime * result + ((onlineTime == null) ? 0 : onlineTime.hashCode());
 		return result;
 	}
 
@@ -89,6 +77,11 @@ public class LocatorDeviceStatus {
 		if (getClass() != obj.getClass())
 			return false;
 		LocatorDeviceStatus other = (LocatorDeviceStatus) obj;
+		if (bluetoothStatus == null) {
+			if (other.bluetoothStatus != null)
+				return false;
+		} else if (!bluetoothStatus.equals(other.bluetoothStatus))
+			return false;
 		if (deviceIMEI == null) {
 			if (other.deviceIMEI != null)
 				return false;
@@ -99,27 +92,15 @@ public class LocatorDeviceStatus {
 				return false;
 		} else if (!deviceMobile.equals(other.deviceMobile))
 			return false;
-		if (deviceStatus == null) {
-			if (other.deviceStatus != null)
-				return false;
-		} else if (!deviceStatus.equals(other.deviceStatus))
-			return false;
 		if (locationPower != other.locationPower)
-			return false;
-		if (onlineTime == null) {
-			if (other.onlineTime != null)
-				return false;
-		} else if (!onlineTime.equals(other.onlineTime))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "LocatorDeviceStatus [deviceIMEI=" + deviceIMEI + ", deviceStatus=" + deviceStatus + ", deviceMobile="
-				+ deviceMobile + ", locationPower=" + locationPower + ", onlineTime=" + onlineTime + "]";
+		return "LocatorDeviceStatus [deviceIMEI=" + deviceIMEI + ", bluetoothStatus=" + bluetoothStatus
+				+ ", deviceMobile=" + deviceMobile + ", locationPower=" + locationPower + "]";
 	}
-
 	
-    
 }

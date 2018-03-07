@@ -35,7 +35,7 @@ public class InstructionsServiceImpl implements InstructionsService {
 		if(pas.isEmpty()){
 			return false;
 		}
-		rabbitTemplate.convertAndSend("request_config_queue", pas);
+		rabbitTemplate.convertAndSend("BLE_request_config_queue", pas);
 		return true;
 	}
 	

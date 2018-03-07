@@ -719,14 +719,13 @@ public class DateUtil {
 		     * @param reportTime
 		     * @return
 		     */
-		    public static Timestamp stringToTimestamp(String reportTime) {
+		    public static Date stringToDate(String reportTime) {
 				
 				try {
 					SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyyMMddHHmmss");
 					Date date = simpleDateFormat .parse(reportTime);
-					long timeStemp = date.getTime();
-			        Timestamp time =new Timestamp(timeStemp);
-					return time;
+					
+					return date;
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

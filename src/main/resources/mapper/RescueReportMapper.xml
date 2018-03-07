@@ -23,18 +23,17 @@
   
    <insert id="addLocationReport" parameterType="com.anyikang.model.vo.VoLocation" >  
         INSERT INTO location
-              (locationId,
-               deviceId,
-               locationType,
-               locationLongitude,
-               locationLatitude,
-               locationSpeed,
-               locationDirection,
-               locationAltitude,
-               locationPower,
-               locationTime,
-               serverTime,
-               regionNumber
+              (location_id,
+               device_id,
+               location_type,
+               longitude,
+               latitude,
+               speed,
+               direction,
+               altitude,
+               power,
+               location_time,
+               server_time
                )
         VALUES
               (#{locationId},
@@ -47,11 +46,7 @@
                #{locationAltitude},
                #{locationElectricity},
                #{locationTime},
-               #{serverTime},
-               #{regionNumber}
+               #{serverTime}
                )
      </insert>
-     
-    
-     
 </mapper>

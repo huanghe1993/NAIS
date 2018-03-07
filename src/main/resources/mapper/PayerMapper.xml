@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anyikang.dao.PayerMapper">
+    <select id="findByPhone" parameterType="String" resultType="com.anyikang.model.Payer">
+         SELECT p.*
+         FROM  payer p
+         WHERE p.mobile=#{mobile}
+    </select>
+    
+    <insert id="insertPayer" parameterType="com.anyikang.model.Payer" >
+        INSERT INTO payer
+		         (mobile,
+		          password,
+		          create_time
+		          )
+		    VALUES(
+		          #{mobile},
+		          #{password},
+		          #{createTime}
+		          )
+    </insert>
+    <select id="selectByMap" parameterType="map" resultType="com.anyikang.model.Payer">
+         SELECT p.*
+         FROM   payer p
+         WHERE  p.mobile=#{mobile}
+         AND    p.password=#{password}
+    </select>
+  
+</mapper>

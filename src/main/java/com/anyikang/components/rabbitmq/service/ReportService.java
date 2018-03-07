@@ -12,15 +12,6 @@ import java.util.Map;
 public interface ReportService {
 	
 	
-	
-	/**
-	 * 心跳上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean heart(Map<String,Object> params);
-
 	/**
 	 * 定位上报
 	 * 
@@ -28,46 +19,6 @@ public interface ReportService {
 	 * @return
 	 */
 	public boolean location(Map<String,Object> params);
-
-	/**
-	 * 运动上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean exercise(Map<String,Object> params);
-
-	/**
-	 * 心率上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean heartRate(Map<String,Object> params);
-
-	/**
-	 * 血氧上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean bloodOxygen(Map<String,Object> params);
-
-	/**
-	 * 血压上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean bloodPressure(Map<String,Object> params);
-
-	/**
-	 * 睡眠上报
-	 * 
-	 * @param messageBody
-	 * @return
-	 */
-	public boolean sleep(Map<String,Object> params);
 
 	/**
 	 * 心跳上报

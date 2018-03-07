@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.anyikang.model.Device;
 import com.anyikang.model.Location;
+import com.anyikang.model.OldManMsg;
 import com.anyikang.model.RescueCount;
 import com.anyikang.model.vo.AlarmVO;
 import com.anyikang.model.vo.LocatorDeviceMessage;
@@ -37,7 +38,7 @@ public interface DeviceMapper {
 	public Map<String,Object> findDeviceByImei(String deviceIMEI );
 	
     //根据设备的imei查询设备
-    public Device findByDeviceNumber(String deviceIMEI);
+    public RescueDevice findByDeviceNumber(String deviceIMEI);
 
     //更新设备的信息
     public void updateDeviceInfo(Device device);
@@ -145,7 +146,7 @@ public interface DeviceMapper {
 	 * @param deviceImei
 	 * @return
 	 */
-	public List<LocatorDeviceStatus> queryDeviceStatus(String deviceImei);
+	public List<LocatorDeviceStatus> queryDeviceStatus(String deviceIMEI);
 
 
 	/**
@@ -161,6 +162,102 @@ public interface DeviceMapper {
 	 * @return
 	 */
 	public List<RescueCount> rescueCountCity(String rescueCenterId);
+
+	/**
+	 * 添加亲情号
+	 * @param phoneMap
+	 * @return
+	 */
+	public int addEmergency(Map<String, Object> phoneMap);
+
+	/**
+	 * 添加亲情号关联表
+	 * @param phoneMap
+	 */
+	public void addOldmanEmergency(Map<String, Object> phoneMap);
+
+	/**
+	 * 查询该设备蓝牙状态
+	 * @param imeiCode
+	 * @return
+	 */
+	public int findBluetoothStatus(String imeiCode);
+
+	/**
+	 * 修改蓝牙状态
+	 * @param param
+	 */
+	public void updateBluetoothStatus(Map<String, Object> param);
+
+	/**
+	 * 查询是否已经录入佩戴者
+	 * @param deviceId
+	 * @return
+	 */
+	public Map<String, Object> findOldManMsg(int deviceId);
+
+	/**
+	 * 添加佩戴者信息
+	 * @param om
+	 * @return
+	 */
+	public int addOldMan(OldManMsg om);
+
+	/**
+	 * 查询佩戴者信息以及亲情号
+	 * @param deviceIMEI
+	 * @return
+	 */
+	public List<Map<String, Object>> findOldMans(String deviceIMEI);
+
+	/**
+	 * 修改佩戴者信息
+	 * @param om
+	 * @return
+	 */
+	public int updateOldMan(OldManMsg om);
+
+	/**
+	 * 删除亲情号
+	 * @param emergency_id
+	 * @return
+	 */
+	public int deleteEmergency(String oldManId);
+
+	/**
+	 * 删除佩戴者信息
+	 * @param oldManId
+	 * @return
+	 */
+	public int deleteOldMan(String oldManId);
+
+	/**
+	 * 修改亲情号
+	 * @param params
+	 * @return
+	 */
+	public int updateParentPhones(Map<String, Object> params);
+
+	/**
+	 * 删除单个亲情号
+	 * @param emergencyId
+	 * @return
+	 */
+	public int deleteParentPhones(String emergencyId);
+
+	/**
+	 * 查询报警记录
+	 * @param deviceIMEI
+	 * @return
+	 */
+	public List<Map<String, Object>> queryAlarmRecord(String deviceIMEI);
+
+	/**
+	 * 查询亲情号个数
+	 * @param oldManId
+	 * @return
+	 */
+	public List<Map<String, Object>> findParentPhones(String oldManId);
 
 
 }

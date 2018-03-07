@@ -1,9 +1,9 @@
 package com.anyikang.dao;
 
+import java.util.List;
+
 import com.anyikang.model.Location;
 import com.anyikang.model.LocationCustom;
-
-import java.util.List;
 
 /**
  * Created by huanghe on 2017/3/30.

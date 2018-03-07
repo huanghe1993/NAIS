@@ -100,16 +100,13 @@ public class AdminUserController extends BaseController{
 		BaseResponse<HashMap> responseMessage = new BaseResponse<>();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		AdminUser adminUser = adminUserService.selectById(usersId);
-		List<AdminRole> adminRoleList = adminRoleService.selectRoleAll();
-		
-		RescueCenter rescueTeam= rescueTeamService.selectById(adminUser.getRescueTeamId());
+		List<AdminRole> adminRoleList = adminRoleService.selectRoleAll();		
 		
 		List<AdminRole> roleList=adminRoleService.selectByUserId(usersId);
 		adminUser.setRoleList(roleList);
 		
 		map.put("adminRoleList", adminRoleList);
 		map.put("adminUser", adminUser);
-		map.put("rescueTeam", rescueTeam);
 		responseMessage.setData(map);
 		return responseMessage;
 	}

@@ -14,29 +14,20 @@
 	    <result column="alarmTime" property="alarmTime"/>  
 	</resultMap>
 	
-    <select id="findByDeviceNumber" parameterType="java.lang.String" resultType="com.anyikang.model.Device">
+
+    <select id="findByDeviceNumber" parameterType="java.lang.String" resultType="com.anyikang.model.vo.RescueDevice">
         select 
-        t1.deviceId,
-			t1.deviceType,
-			t1.deviceIMEI,
-			t1.deviceName,
-			t1.deviceModel,
-			t1.deviceVersion,
-			t1.deviceMobile,
-			t1.locationMode,
-			t1.timeInterval,
-			t1.devicePower,
-			t1.deviceStatus,
-			DATE_FORMAT(
-				t1.onlineTime,
-				'%Y-%m-%d %H:%i:%s'
-			) onlineTime,
-			DATE_FORMAT(
-				t1.deviceCreateTime,
-				'%Y-%m-%d %H:%i:%s'
-			) deviceCreateTime,
-			t1.railStatus
-         from device t1 where t1.deviceIMEI=${value}
+	            t1.device_id as deviceId,
+				t1.imei_code as deviceIMEI,
+				t1.device_name as deviceName,
+				t1.device_mobile as deviceMobile,
+				t1.power as devicePower,
+				t1.status as deviceStatus,
+				DATE_FORMAT(t1.online_time,'%Y-%m-%d %H:%i:%s') onlineTime,
+				DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') deviceCreateTime,
+				t1.bluetooth_status 
+         from   device t1 
+         where  t1.imei_code=#{deviceIMEI}
     </select>
     
     <select id="findByDeviceIMEI" parameterType="java.lang.String" resultType="java.util.HashMap">
@@ -123,48 +114,6 @@
 			t1.userId = ${userId}
     </select>
     
-    <!--查询设备是否在线-->
-    <select id="findIsOnlineByDeviceNumber" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT IF((TIMESTAMPDIFF(SECOND, onlineTime, NOW()) &lt; 3600 &amp;&amp; TIMESTAMPDIFF(SECOND, onlineTime, NOW()) &gt; 0),1,0) is_online FROM device WHERE deviceIMEI = #{deviceIMEI};
-    </select>
-    
-    <!-- 根据群id获取设备列表 -->
-    <select id="findDeviceByTeam" parameterType="java.lang.Long" resultType="java.util.HashMap">
-        SELECT
-			t1.*,
-			IF(t2.locationLatitude  is null, '',t2.locationLatitude)latitude,
-			IF(t2.locationLongitude is null, '',t2.locationLongitude)longitude
-		FROM
-			(
-				SELECT
-					d.deviceId,
-					d.deviceName,
-					d.deviceModel,
-					d.deviceIMEI
-				FROM
-					device d
-				JOIN user_device ud ON d.deviceId = ud.deviceId
-				JOIN team t ON t.teamOwnerID = ud.userId
-				WHERE
-					t.teamId = ${teamId}
-			) t1
-		LEFT JOIN (
-			SELECT
-				deviceId,
-				locationLatitude,
-				locationLongitude
-			FROM
-				location
-			WHERE
-				locationTime = (
-					SELECT
-						MAX(locationTime)
-					FROM
-						location
-				)
-		) t2 ON t1.deviceId = t2.deviceId
-    </select>
-    
     <select id="findLastLocation" parameterType="java.lang.Integer" resultType="com.anyikang.model.Location">
        select locationLatitude,locationLongitude from location where deviceId=#{deviceId} and locationTime=(select MAX(locationTime) from location)
     </select>
@@ -241,14 +190,12 @@
     
     <insert id="addDevice" parameterType="com.anyikang.model.vo.RescueDevice" useGeneratedKeys="true" keyProperty="deviceId">
         INSERT INTO device (
-			deviceType,
-			deviceIMEI,
-			deviceName,
-			deviceCreateTime
+			imei_code,
+			device_name,
+			create_time
 		)
 		VALUES
 			(
-			#{deviceType},
 			#{deviceIMEI},
 			#{deviceName},
 			#{deviceCreateTime}
@@ -273,37 +220,33 @@
               
         WHERE deviceIMEI=#{deviceIMEI}
     </update>
-     <select id="findOldManMsg"  parameterType="String"  resultType="map">
+     <select id="findOldManMsg"  parameterType="java.lang.Integer"  resultType="map">
            SELECT  
-			        d.deviceIMEI   as deviceIMEI,
-			        o.image_url    as image_url,
-			        o.surname      as xing,
-			        o.`name`       as ming,
-			        d.deviceType   as deviceType,
-			        d.timeInterval as locationInterval,
-			        o.age          as age,
-			        o.sex          as sex,
-			        o.address      as address,
-			        d.deviceMobile as deviceMobile,
-			        o.mobile       as phone
-			
+			        d.imei_code     as deviceIMEI,
+			        o.surname       as xing,
+			        o.`name`        as ming,
+			        o.age           as age,
+			        o.sex           as sex,
+			        o.address       as address,
+			        d.device_mobile as deviceMobile,
+			        o.mobile        as phone
 			FROM    device d, old_man o        
-			WHERE   d.deviceId=o.deviceId
-			AND     d.deviceIMEI=#{deviceIMEI}
+			WHERE   d.device_id=o.device_id
+			AND     o.device_id=#{deviceId}
      </select>
      
-     <insert id="addOldMan" parameterType="com.anyikang.model.OldManMsg">
+       <insert id="addOldMan" parameterType="com.anyikang.model.OldManMsg">
             INSERT INTO  old_man
                     
                      (old_man_id,
-                      deviceId,
+                      device_id,
                       surname,
                       name,
                       sex,
-                      image_url, 
                       age,
                       mobile,
-                      address
+                      address,
+                      create_time
                       )
             VALUES  (
                      #{oldManId},
@@ -311,39 +254,18 @@
                      #{surname},
                      #{name},
                      #{sex},
-                     #{imageUrl},
                      #{age},
                      #{mobile},
-                     #{address}
+                     #{address},
+                     #{createTime}
                     )
      </insert>
-     
-      <select id="findOldMans"  parameterType="String"  resultType="map">
-           SELECT  
-                    
-			        d.deviceIMEI   as deviceIMEI,
-			        o.old_man_id   as oldManId,
-			        o.image_url    as imageUrl,
-			        o.surname      as surname,
-			        o.name         as name,
-			        o.age          as age,
-			        o.sex          as sex,
-			        o.address      as address,
-			        o.mobile       as phone
-			
-			FROM    device d, old_man o        
-			WHERE   d.deviceId=o.deviceId
-			<if test="_parameter!=null">
-			AND     d.deviceIMEI=#{deviceIMEI}
-			</if>
-     </select>
      
      <update id="updateOldMan" parameterType="com.anyikang.model.OldManMsg" >
            UPDATE 
                  old_man o
                  
            SET
-           <trim suffixOverrides=",">
              <if test="surname!=null">
                  o.surname=#{surname},
              </if>
@@ -353,9 +275,6 @@
              <if test="sex!=null">
                  o.sex=#{sex},
              </if>
-             <if test="imageUrl!=null">
-                 o.image_url=#{imageUrl}, 
-             </if>
              <if test="age!=null">  
                  o.age=#{age},
              </if> 
@@ -363,11 +282,11 @@
                  o.mobile=#{mobile},
              </if> 
              <if test="address!=null">
-                 o.address=#{address}
+                 o.address=#{address},
              </if>
-          </trim>
+                 o.create_time=#{createTime}
           WHERE 
-                 o.deviceId=#{deviceId}
+                 o.old_man_id=#{oldManId}
      </update>
      
      
@@ -379,10 +298,9 @@
      
      <select id="findDevice" resultType="map">
         SELECT
-		       d.deviceIMEI,
-		       d.deviceName,
-		       d.deviceType,
-		       d.deviceCreateTime
+		       d.imei_code   as deviceIMEI,
+		       d.device_name as deviceName,
+		       d.create_time as createTime
 		 FROM  device d
      </select>
      
@@ -398,189 +316,180 @@
       <!-- 不在线设备 -->
   <select id="offLine" resultType="map">
         SELECT
-      
-		      d.deviceIMEI,
-		      IFNULL(DATE_FORMAT(d.onlineTime,'%Y-%m-%d %H:%i:%s'),"无") as onlineTime,
-		      IFNULL(g.name,"无") as name, 
-		      IFNULL(g.mobile,"无") as mobile
+		      d.imei_code as deviceIMEI,
+		      IFNULL(DATE_FORMAT(d.online_time,'%Y-%m-%d %H:%i:%s'),'无') as onlineTime
 		FROM  device d
-		LEFT JOIN user_device ud
-		ON   d.deviceId=ud.deviceId
-		LEFT JOIN guardian g
-		ON   ud.userId=g.userId
-		WHERE unix_timestamp(SYSDATE())-unix_timestamp(IFNULL(d.onlineTime,0))-(IFNULL(d.timeInterval,0)*3*60)>0
-		ORDER BY   d.onlineTime DESC
+		WHERE UNIX_TIMESTAMP(SYSDATE())-UNIX_TIMESTAMP(IFNULL(d.online_time, 0))-300>0
+		ORDER BY  d.online_time DESC
   </select>
   <!-- 在线设备 -->
    <select id="onLine" resultType="map">
        SELECT
-		      d.deviceIMEI,
-		      IFNULL(DATE_FORMAT(d.onlineTime,'%Y-%m-%d %H:%i:%s'),"无") as onlineTime,
-		      IFNULL(g.name,"无") as name, 
-		      IFNULL(g.mobile,"无") as mobile
+		      d.imei_code as deviceIMEI,
+		      IFNULL(DATE_FORMAT(d.online_time,'%Y-%m-%d %H:%i:%s'),"无") as onlineTime
 		FROM  device d
-		LEFT JOIN user_device ud
-		ON   d.deviceId=ud.deviceId
-		LEFT JOIN guardian g
-		ON   ud.userId=g.userId
-		WHERE 0>=unix_timestamp(SYSDATE())-unix_timestamp(IFNULL(d.onlineTime,0))-(IFNULL(d.timeInterval,0)*3*60)
-		ORDER BY   d.onlineTime DESC
+		WHERE 0>=UNIX_TIMESTAMP(SYSDATE())-UNIX_TIMESTAMP(d.online_time)-300
+		ORDER BY  d.online_time
   </select>
   
    <!-- 查询设备信息 -->
   <select id="queryDevice"  parameterType="String" resultType="com.anyikang.model.vo.LocatorDeviceMessage">
-     SELECT  
-               d.deviceId      AS  deviceId,
-		       d.deviceIMEI    AS  deviceImei,
-		       CONCAT(o.surname,o.name) AS  deviceUserName,
-		       d.deviceMobile  AS  devicePhone,
-		       d.timeInterval  AS  timeInterval,
-		       GROUP_CONCAT(e.mobile," ") AS familyPhones,
-		       IF(r.railName IS null,"无电子围栏",r.railName) AS  railName
-    FROM       device d
-    LEFT JOIN  old_man o
-    ON         d.deviceId=o.deviceId
-    LEFT JOIN  device_emergency_contact c
-    ON         d.deviceId=c.deviceId
-    LEFT JOIN  emergency_contact e
-    on         c.emergency_contact_id=e.emergency_contact_id
-    LEFT JOIN  rail r
-    on         d.deviceId=r.deviceId
-    <if test="_parameter!=null">
-      WHERE    d.deviceIMEI =#{deviceImei}
-    </if>
-    GROUP BY   d.deviceId
-  
+		   SELECT  
+	                   d.device_id      AS  deviceId,
+			           d.imei_code      AS  deviceImei,
+			           CONCAT(o.surname,o.name)  AS  deviceUserName,
+			           d.device_mobile  AS  devicePhone,
+			           GROUP_CONCAT(e.mobile," ") AS familyPhones
+		    FROM       device d
+		    LEFT JOIN  old_man o
+		    ON         d.device_id=o.device_id
+		    LEFT JOIN  emergency e
+		    ON         o.old_man_id=e.old_man_id
+            <if test="_parameter!=null">
+		    WHERE      d.imei_code =#{deviceImei}
+		    </if>
+		    GROUP BY   d.device_id
   </select>
   
   
   <select id="queryOrbit" resultType="map" parameterType="map" >
-		  SELECT  
-		        device.deviceIMEI,
-		        DATE_FORMAT(location.locationTime,'%Y-%m-%d %H:%i:%s') as locationTime,
-		        location.locationType,
-		        location.locationLongitude,
-		        location.locationLatitude
+		 SELECT  
+		        d.imei_code as    deviceIMEI,
+		        DATE_FORMAT(l.location_time,'%Y-%m-%d %H:%i:%s') as locationTime,
+		        l.location_type as locationType,
+		        l.longitude as  locationLongitude,
+		        l.latitude  as  locationLatitude
 
-		  FROM  device,location
-		  WHERE location.deviceId=device.deviceId
-	       and  device.deviceIMEI=#{deviceImei}
-	       <if test="startTime!=null">
-            and  location.locationTime> #{startTime}  
-          </if>
-          <if test="endTime!=null">
-            and  #{endTime} > location.locationTime   
-          </if>
-          ORDER BY location.locationTime 
-          
+		  FROM  device d,location l
+		  WHERE l.device_id=d.device_id
+		  and  d.imei_code=#{deviceImei}
+		  <if test="startTime!=null">
+				and  l.location_time> #{startTime}  
+		  </if>
+		  <if test="endTime!=null">
+				and  #{endTime} > l.location_time  
+		  </if>
+		  ORDER BY l.location_time 
   </select>
   
    <select id="queryDeviceStatus" resultType="com.anyikang.model.vo.LocatorDeviceStatus" parameterType="String" >
    
-	     SELECT          
-			      d.deviceIMEI   as deviceIMEI,
-			      d.deviceMobile as deviceMobile,
-	              d.devicePower  as locationPower,
-	              IFNULL(t.`status`,'正常') as deviceStatus,
-			      DATE_FORMAT(d.onlineTime,'%Y-%m-%d %H:%i:%s') as onlineTime
-	      FROM    device  d 
-	      LEFT JOIN (SELECT  
-					   (case a.alarmType 
-						when 1 then 'SOS报警'
-						when 2 then '低电报警'
-						when 3 then '进入围栏'
-						when 4 then '离开围栏'
-	                    when 5 then '监护人报警'
-						ELSE '正常'
-						end) as status,
-						l.deviceId
-				 FROM   location l,alarm a
-				 WHERE  l.locationTime in 
-									  (SELECT   MAX(lo.locationTime) 
-										FROM    alarm al,location lo,rescue_task r
-										WHERE   al.locationId=lo.locationId
-		                                 AND    al.alarmId=r.alarmId
-		                                 AND    (al.rescueType=0 or r.`status`=1)                            
-			                           GROUP BY lo.deviceId)
-				 AND   l.locationId=a.locationId
-				 GROUP BY l.deviceId) t
-	       ON    d.deviceId=t.deviceId
-	       
-	     <if test="_parameter!=null">
-		  WHERE  d.deviceIMEI=#{deviceImei}
-		 </if>
-	      ORDER BY 
-	             onlineTime DESC
+	    SELECT          
+			  d.imei_code   as deviceIMEI,
+			  d.device_mobile as deviceMobile,
+	          d.power  as locationPower,
+	          (case d.bluetooth_status 
+	             when 1 then '蓝牙断开'
+	             when 0 then '蓝牙正常连接'
+	             end ) as bluetoothStatus
+         FROM  device  d
+         <if test="_parameter!=null">
+	     WHERE d.imei_code=#{deviceIMEI}
+         </if>
+         ORDER BY d.online_time DESC
   </select>
-  
-  <select id="rescueCount" parameterType="java.lang.Integer" resultType="com.anyikang.model.RescueCount">
-            SELECT 
-		         h.rescue_center_name  as rescueTeam,
-		         IFNULL(SUM(h.alarmId),0) as alarmNumber,
-		         IFNULL(SUM(h.state),0) as rescueNumber,
-		         h.rescue_center_id as rescueCenterId,
-		         h.rescue_charge_name as rescueChargeName,
-		         h.charge_mobile  as chargeMobile,	
-		         h.rescue_city_code as rescueCityCode
-          FROM 
-				 (SELECT    
-						  re.rescue_center_name,
-						  re.rescue_center_id,
-						  re.rescue_charge_name,
-						  re.charge_mobile,
-						  re.create_time,
-                          re.rescue_city_code, 
-						  IF(rt.alarmId is null,0,1) as alarmId,
-						  IFNULL((CASE rt.`status` WHEN 3 THEN 1 WHEN 4 THEN 1 ELSE 0 END),0) as state 
-					FROM  rescue_center re 
-					LEFT JOIN rescue_task rt
-					on (  rt.regionNumber= re.rescue_city_code
-                          OR  rt.regionNumber in ( SELECT  t.rescue_city_code  
-						                            FROM   rescue_center t  
-						                            WHERE  t.rescue_parent_code=re.rescue_center_id 
-							                          OR   t.rescue_parent_code in (SELECT  t1.rescue_center_id  
-																					FROM    rescue_center t1  
-																					WHERE   t1.rescue_parent_code=re.rescue_center_id
-																					OR      t1.rescue_parent_code in (SELECT t2.rescue_center_id  
-																														FROM rescue_center t2  
-																													   WHERE t2.rescue_parent_code=re.rescue_center_id))))
-			WHERE re.rescue_parent_code=(SELECT   rc.rescue_center_id  FROM admin_user a,rescue_center rc   WHERE a.rescue_center_id=rc.rescue_center_id AND a.user_id=#{userId} )
-               OR re.rescue_center_id = (SELECT   rc.rescue_center_id  FROM admin_user a,rescue_center rc   WHERE a.rescue_center_id=rc.rescue_center_id AND a.user_id=#{userId} )
-               ) h
-		GROUP BY h.rescue_center_name
-		ORDER BY h.create_time 
-  </select>
-  
-  <select id="rescueCountCity" parameterType="String" resultType="com.anyikang.model.RescueCount">
-         SELECT 
-		      h.rescue_center_name  as rescueTeam,
-		      IFNULL(SUM(h.alarmId),0) as alarmNumber,
-		      IFNULL(SUM(h.state),0) as rescueNumber,
-		      h.rescue_center_id as rescueCenterId,
-		      h.rescue_charge_name as rescueChargeName,
-		      h.charge_mobile  as chargeMobile,
-		      h.rescue_city_code as rescueCityCode
-          FROM 
-				 (SELECT    
-						  re.rescue_center_name,
-						  re.rescue_center_id, 
-						  re.rescue_charge_name,
-						  re.rescue_city_code,
-						  re.charge_mobile,
-						  IF(rt.alarmId is null,0,1) as alarmId,
-						  IFNULL((CASE rt.`status` WHEN 3 THEN 1 WHEN 4 THEN 1 ELSE 0 END),0) as state 
-					FROM  rescue_center re 
-					LEFT JOIN rescue_task rt
-					on(rt.regionNumber =re.rescue_city_code
-					   or rt.regionNumber in ( SELECT  t.rescue_city_code  
-											   FROM    rescue_center t  
-											   WHERE   t.rescue_parent_code=re.rescue_center_id))	
-					WHERE re.rescue_parent_code=#{rescueCenterId}
-               ) h
-		GROUP BY h.rescue_center_name
-		ORDER BY h.rescue_center_id
-  </select>
-  
 
-  
+   <insert id="addEmergency" parameterType="map">
+         INSERT INTO emergency
+                  ( 
+                    emergency_id, 
+                    old_man_id,
+                    mobile
+                   )
+          VALUES  ( 
+                    #{phoneId},
+                    #{oldManId},
+                    #{phone}
+                  )
+   </insert> 
+     <select id="findBluetoothStatus"  parameterType="String" resultType="java.lang.Integer">
+           SELECT
+			      d.bluetooth_status as bluetoothStatus
+			FROM  device d
+			
+			WHERE d.imei_code=#{imeiCode}
+     </select>
+      <update id="updateBluetoothStatus" parameterType="map">
+          UPDATE 
+			     device d
+			SET  d.bluetooth_status=#{bluetoothStatus}
+		  WHERE  d.imei_code=#{deviceIMEI}
+     </update>
+     
+     <select id="findOldManMsg"  parameterType="java.lang.Integer"  resultType="map">
+           SELECT  
+			        d.imei_code    as deviceIMEI,
+			        o.surname      as xing,
+			        o.`name`       as ming,
+			        o.age          as age,
+			        o.sex          as sex,
+			        o.address      as address,
+			        d.device_mobile as deviceMobile,
+			        o.mobile       as phone
+			FROM    device d, old_man o        
+			WHERE   d.device_id=o.device_id
+			and     o.device_id=#{deviceId}
+     </select>
+     <select id="findOldMans" parameterType="String" resultType="map">
+            SELECT  
+			        d.imei_code   as deviceIMEI,
+			        o.old_man_id   as oldManId,
+			        o.surname      as surname,
+			        o.name         as name,
+			        o.age          as age,
+			        o.sex          as sex,
+			        o.address      as address,
+			        o.mobile       as phone,
+	                IFNULL(GROUP_CONCAT(e.emergency_id,":",e.mobile),' ') AS familyPhones
+			FROM    device d, old_man o
+		    LEFT JOIN emergency e
+		    ON      o.old_man_id=e.old_man_id       
+		    WHERE   d.device_id=o.device_id
+		    <if test="_parameter!=null">
+			AND     d.imei_code=#{deviceIMEI}
+			</if>
+		    GROUP BY d.imei_code
+     </select>
+     <delete id="deleteEmergency" parameterType="String">
+          DELETE FROM 
+                 emergency 
+           WHERE old_man_id=#{oldManId}
+     </delete>
+     <update id="updateParentPhones" parameterType="map" >
+           UPDATE 
+                 emergency e
+           SET   e.mobile=#{mobile}
+           
+           WHERE e.emergency_id=#{emergencyId}
+     </update>
+     <delete id="deleteParentPhones" parameterType="String">
+	        DELETE FROM
+	               emergency
+	        WHERE  emergency_id=#{emergencyId}
+     </delete>
+     <select id="queryAlarmRecord" parameterType="String" resultType="map">
+           SELECT
+				     d.imei_code as deviceIMEI,
+				     CONCAT(o.surname,o.`name`) as name,
+				     a.alarm_addr as  alarmAddress,
+				     (CASE a.alarm_type WHEN 2 then '低电报警' WHEN 1 then 'sos报警' WHEN 3 then '蓝牙断开报警' END) as alarm,
+				     a.alarm_time,
+				     (CASE a.is_call WHEN 1 then '未通知家属救援' WHEN 2 then '已经通知亲人救援' ELSE '无需处理' END) as rescueStatus
+			FROM     device d,old_man o,location l,alarm a
+			WHERE    d.device_id=o.device_id
+			AND      d.device_id=l.device_id
+			AND      l.location_id=a.location_id
+	        <if test="_parameter!=null">
+	        AND      d.imei_code=#{deviceIMEI}
+	        </if>
+            ORDER BY a.alarm_time DESC
+     </select>
+     
+     <select id="findParentPhones" parameterType="String" resultType="map">
+            SELECT
+                  e.*
+		    FROM  emergency e
+		    WHERE e.old_man_id=#{oldManId}
+     </select>
+
 </mapper>
