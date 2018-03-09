@@ -28,4 +28,11 @@ public interface PayerMapper {
 	 */
 	public List<Payer> selectByMap(Map<String, Object> map);
 
+	/**
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public int modifypwById(Map<String, Object> params);
+
 }

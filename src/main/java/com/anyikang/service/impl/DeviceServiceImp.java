@@ -11,14 +11,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.anyikang.dao.DeviceMapper;
-import com.anyikang.model.Device;
 import com.anyikang.model.OldManMsg;
-import com.anyikang.model.RescueCount;
-import com.anyikang.model.vo.AlarmVO;
 import com.anyikang.model.vo.LocatorDeviceMessage;
 import com.anyikang.model.vo.LocatorDeviceStatus;
 import com.anyikang.model.vo.RescueDevice;
@@ -36,9 +32,6 @@ public class DeviceServiceImp implements DeviceService {
 
 	
 	
-	@Value("${spring.files.images-path}")
-	private String imagePath;
-	
     @Autowired
     private DeviceMapper deviceMapper;
 
@@ -47,16 +40,6 @@ public class DeviceServiceImp implements DeviceService {
         return deviceMapper.findByDeviceNumber(deviceIMEI);
     }
 
-
-
-    @Override
-    public List<Map<String,Object>> findDeviceByTeam(long teamId) {
-    	List<Map<String,Object>> list= deviceMapper.findDeviceByTeam(teamId);
-    	if(list==null||list.size()==0){
-    		return null;
-    	}
-    	return list;
-    }
 
 
 	/* (non-Javadoc)
@@ -68,31 +51,6 @@ public class DeviceServiceImp implements DeviceService {
 	  return n==1;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.anyikang.service.DeviceService#getDevicesByUserId(long)
-	 */
-	@Override
-	public List<Map<String,Object>> getDevicesByUserId(long userId) {
-		// TODO Auto-generated method stub
-		return deviceMapper.findDevicesByUserId(userId);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.anyikang.service.DeviceService#getAlarmInfosByUserId(long)
-	 */
-	@Override
-	public List<AlarmVO> getAlarmInfosByUserId(long userId) {
-	    return deviceMapper.findAlarmInfosByUserId(userId);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.anyikang.service.DeviceService#getAllDevicesByAddr(java.lang.String)
-	 */
-	@Override
-	public List<Map<String,Object>> getAllDevicesByAddr(String[] areaids) {
-		// TODO Auto-generated method stub
-		return deviceMapper.getAllDevicesByAddr(areaids);
-	}
 
 	@Override
 	public List<Map<String, Object>> getAllDevices() {
@@ -105,10 +63,6 @@ public class DeviceServiceImp implements DeviceService {
 		return deviceMapper.findDevice();
 	}
 
-	@Override
-	public List<Map<String, Object>> findDeviceKinds() {
-		return deviceMapper.findDeviceKinds();
-	}
 
 	@Override
 	public List<Map<String, Object>> onLineDevice() {
@@ -180,24 +134,6 @@ public class DeviceServiceImp implements DeviceService {
 			 return null;
 		 }
 		 return list;
-	}
-
-	@Override
-	public List<RescueCount> rescueCount(Integer userId) {
-		List<RescueCount> list =deviceMapper.rescueCount(userId);
-		if(list==null||list.size()==0){
-        	return null;
-        }
-		return list;
-	}
-
-	@Override
-	public List<RescueCount> rescueCenterId(String rescueCenterId) {
-		List<RescueCount> list =deviceMapper.rescueCountCity(rescueCenterId);
-		if(list==null||list.size()==0){
-        	return null;
-        }
-		return list;
 	}
 
 
@@ -404,13 +340,16 @@ public class DeviceServiceImp implements DeviceService {
 
 
 	@Override
-	public boolean addParentPhone(String oldManId, String phone) {
+	public Map<String,Object> addParentPhone(String oldManId, String phone) {
 		Map<String,Object> params =new HashMap<>();
 		params.put("oldManId", oldManId);
 		params.put("mobile", phone);
 		params.put("emergencyId", UUID.randomUUID().toString());
 		int n =deviceMapper.addEmergency(params);
-		return n==1;
+		if(n==1){
+			return params;
+		}
+		return null;
 	}
 
 

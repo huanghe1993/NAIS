@@ -26,7 +26,6 @@ import com.anyikang.model.vo.VoLocation;
 import com.anyikang.utils.DateUtil;
 import com.anyikang.utils.IEEE754Utils;
 import com.anyikang.utils.LngLat;
-import com.anyikang.utils.MapAPIUtil;
 import com.anyikang.utils.WifLbsUtil;
 
 
@@ -146,12 +145,7 @@ public class ReportServiceImpl implements ReportService {
 
 		if(vo.getLocationLatitude()==0||vo.getLocationLongitude()==0){
 			return false;
-		}
-		
-		//1.经纬度反查区域码
-		Map<String,String> maps = MapAPIUtil.toAddr(vo.getLocationLatitude(), vo.getLocationLongitude());
-	    String formatted_address = maps.get("formatted_address").toString();
-	    System.err.println("========"+formatted_address+"==========");
+		}		
 	     
 		//2.保存定位数据
 		reportMapper.addLocationReport(vo);
@@ -182,7 +176,13 @@ public class ReportServiceImpl implements ReportService {
 				al.setAlarmType(1);
 				al.setRescueType(1);
 				al.setAlarmId(UUID.randomUUID().toString());
-				al.setIsCall(1);
+				//查询当前是否为报警状态未处理,如果是未处理,则新的报警信息只进入数据库,不进行处理
+				Map<String,Object> map =alarmMapper.findAlarmByImei(imeiCode);
+				if(map!=null&&map.size()>0){
+					al.setIsCall(0);
+				}else{
+					al.setIsCall(1);
+				}
 		        int n =alarmMapper.addAlarmMessage(al);
 				if(n==1){
 				   System.err.println("==============保存报警信息(发生意外1)================");

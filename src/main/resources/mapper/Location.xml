@@ -9,13 +9,6 @@
         <result column="locationTime" property="locationTime" />
     </resultMap>
     -->
-    <select id="findLocationInfoByDeviceId" parameterType="java.lang.Integer" resultType="com.anyikang.model.Location">
-        SELECT * from location where deviceId=#{deviceId}
-    </select>
-    
-    <select id="findLocationByDeviceAndDateSection" parameterType="com.anyikang.model.LocationCustom" resultType="com.anyikang.model.Location">
-        select * from location  where location.deviceId = #{deviceId} and locationTime between #{startDate} and #{endDate} order by locationId desc
-    </select>
 
      <insert id="addLocationMessage" parameterType="com.anyikang.model.Location" >
         INSERT INTO location

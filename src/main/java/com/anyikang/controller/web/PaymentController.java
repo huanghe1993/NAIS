@@ -1,20 +1,12 @@
 package com.anyikang.controller.web;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -32,8 +24,7 @@ import com.anyikang.model.Payer;
 import com.anyikang.model.vo.admin.UserCredentials;
 import com.anyikang.service.PaymentService;
 import com.anyikang.utils.AssertUtil;
-import com.anyikang.utils.StringRedisUtil;
-import com.fasterxml.jackson.databind.JsonNode; 
+import com.anyikang.utils.StringRedisUtil; 
 
 
 

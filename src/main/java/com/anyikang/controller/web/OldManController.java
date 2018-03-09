@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
-import com.anyikang.model.Device;
 import com.anyikang.model.OldManMsg;
 import com.anyikang.model.vo.RescueDevice;
 import com.anyikang.service.DeviceService;
@@ -50,7 +49,6 @@ public class OldManController extends BaseController {
  			                         String phone,
 			                         String address,
 			                         String deviceIMEI,
-			                         String deviceName,
  			                         int age,
  			                         int sex,
  			                         String tokenId,
@@ -78,7 +76,7 @@ public class OldManController extends BaseController {
  	    	RescueDevice addDevice = new RescueDevice();
  	    	addDevice.setDeviceCreateTime(new Timestamp(System.currentTimeMillis()));
  	    	addDevice.setDeviceIMEI(deviceIMEI);
- 	    	addDevice.setDeviceName(deviceName);
+ 	    	addDevice.setDeviceName("BLE摔倒报警器");
  	    	addDevice.setBluetoothStatus(0);
  	    	boolean flag =deviceService.addDevice(addDevice);
  	    	if(flag){
@@ -250,7 +248,7 @@ public class OldManController extends BaseController {
  	 * @param request
  	 * @return
  	 */
- 	@RequestMapping(value ="/deleteParentPhones", method = RequestMethod.POST)
+ 	@RequestMapping(value ="/deleteParentPhones", method = RequestMethod.GET)
  	public BaseResponse<?> deleteParentPhones(
  			                             String emergencyId,
  			                             String oldManId,
@@ -287,7 +285,7 @@ public class OldManController extends BaseController {
  			                             String oldManId,
 							             String phone,
 							             String tokenId) {
- 		BaseResponse<String> baseResponse = new BaseResponse<>();
+ 		BaseResponse<Map<String,Object>> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
  		int parentPhones =deviceService.findParentPhones(oldManId);
  		if(parentPhones>=5){
@@ -296,10 +294,11 @@ public class OldManController extends BaseController {
  			return baseResponse;
  		}
 		//有此佩戴者信息,修改
-		boolean  flags=deviceService.addParentPhone(oldManId,phone);
-		if(flags){
+ 		Map<String,Object>  flags=deviceService.addParentPhone(oldManId,phone);
+		if(flags!=null&&flags.size()>0){
 			baseResponse.setStatus(1);
 			baseResponse.setMsg("添加成功");
+			baseResponse.setData(flags);
 			return baseResponse;
 		}
 		baseResponse.setStatus(0);

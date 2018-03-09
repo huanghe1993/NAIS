@@ -25,5 +25,10 @@
          WHERE  p.mobile=#{mobile}
          AND    p.password=#{password}
     </select>
+    <update id="modifypwById" parameterType="map" >
+         UPDATE payer
+         SET    password =#{newpw}
+         WHERE  user_id =#{userId}
+    </update>
   
 </mapper>
