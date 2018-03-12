@@ -73,14 +73,6 @@ public class indexController {
     	//查询佩戴者当前报警状态
     	List<Map<String,Object>> sosList =alarmService.getAllSos();
     	if(sosList!=null&&sosList.size()>0){
-    		for(Map<String,Object> sosMap:sosList){
-    			if(sosMap.containsKey("latitude")&&sosMap.containsKey("longitude")){
-    			 //经纬度转换为地址信息
-    			 Map<String,String> maps = MapAPIUtil.toAddr((int)sosMap.get("latitude"),(int)sosMap.get("longitude"));
-    			 String formatted_address = maps.get("formatted_address").toString();	
-    			 sosMap.put("sosAddress", formatted_address);
-    			}
-    		}
     		map.put("sosList", sosList);
     	}else{
     		map.put("sosList", new ArrayList<>());

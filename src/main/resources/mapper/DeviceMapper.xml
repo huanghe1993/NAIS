@@ -54,8 +54,8 @@
 				    (SELECT 
 								t3.device_id as deviceId,
 								t3.location_type as locationType,
-								t3.latitude as longitude,
-								t3.longitude as latitude,
+								t3.latitude as latitude,
+								t3.longitude as longitude,
 								t3.location_time as locationTime
 				     FROM       location t3,(SELECT MAX(l.location_time) as location_time ,l.device_id FROM location l GROUP BY l.device_id) t2 
 				     WHERE      t3.location_time =t2.location_time
@@ -69,13 +69,15 @@
         INSERT INTO device (
 			imei_code,
 			device_name,
-			create_time
+			create_time,
+			bluetooth_Status
 		)
 		VALUES
 			(
 			#{deviceIMEI},
 			#{deviceName},
-			#{deviceCreateTime}
+			#{deviceCreateTime},
+			#{bluetoothStatus}
 			)
     </insert>
 
@@ -213,7 +215,7 @@
 
 		  FROM  device d,location l
 		  WHERE l.device_id=d.device_id
-		  and  d.imei_code=#{deviceImei}
+		  and   d.imei_code=#{deviceImei}
 		  <if test="startTime!=null">
 				and  l.location_time> #{startTime}  
 		  </if>

@@ -18,6 +18,7 @@
               rescue_type,
               alarm_power,
               alarm_time,
+              alarm_addr,
               is_call
               )
         VALUES
@@ -28,6 +29,7 @@
 			#{rescueType},
 			#{alarmPower},
 			#{alarmTime},
+			#{alarmAddr},
 			#{isCall}
 			)
     </insert>
@@ -56,6 +58,7 @@
 		      l.latitude   as latitude, 
               l.longitude  as longitude,
 		      a.alarm_id   as alarmId,
+		      a.alarm_addr as alarmAddr,
 		      a.is_call    as isCall,
 		      a.alarm_time as alarmTime	      
 		FROM  device d,location l,alarm a

@@ -146,40 +146,40 @@ public class DeviceServiceImp implements DeviceService {
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
 			map.put("oldManId", oldManId);
-			map.put("phoneId", phoneId);
-			map.put("phone", phone1);
+			map.put("emergencyId", phoneId);
+			map.put("mobile", phone1);
 			phoneList.add(map);
 		}
 		if(phone2!=null&&phone2.trim().length()!=0){
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
 			map.put("oldManId", oldManId);
-			map.put("phoneId", phoneId);
-			map.put("phone", phone2);
+			map.put("emergencyId", phoneId);
+			map.put("mobile", phone2);
 			phoneList.add(map);
 		}
 		if(phone3!=null&&phone3.trim().length()!=0){
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
 			map.put("oldManId", oldManId);
-			map.put("phoneId", phoneId);
-			map.put("phone", phone3);
+			map.put("emergencyId", phoneId);
+			map.put("mobile", phone3);
 			phoneList.add(map);
 		}
 		if(phone4!=null&&phone4.trim().length()!=0){
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
 			map.put("oldManId", oldManId);
-			map.put("phoneId", phoneId);
-			map.put("phone", phone4);
+			map.put("emergencyId", phoneId);
+			map.put("mobile", phone4);
 			phoneList.add(map);
 		}
 		if(phone5!=null&&phone5.trim().length()!=0){
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
 			map.put("oldManId", oldManId);
-			map.put("phoneId", phoneId);
-			map.put("phone", phone5);
+			map.put("emergencyId", phoneId);
+			map.put("mobile", phone5);
 			phoneList.add(map);
 		}
 		if(phoneList.size()==0){

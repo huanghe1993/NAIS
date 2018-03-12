@@ -215,7 +215,7 @@ public class RescueDeviceController extends BaseController{
      * @return
      */
     @GetMapping("query/alarmRecord")
-    public BaseResponse<?> queryAlarmRecord(int pageIndex, int pageSize,String deviceIMEI) {
+    public BaseResponse<?> queryAlarmRecord(int pageIndex, int pageSize,@RequestParam(value="deviceIMEI",required=false) String deviceIMEI) {
     	BaseResponse<PageInfo<List<Map<String,Object>>>> responseMessage = new BaseResponse<>();
     	PageMethod.startPage(pageIndex, pageSize);
     	@SuppressWarnings("unchecked")

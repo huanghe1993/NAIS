@@ -33,7 +33,7 @@ public class ReportListener {
 			}
 			System.err.println("}");
 			
-			String functionCode=(String) params.get("functionCode");
+			String functionCode= params.get("functionCode").toString();
 			switch (functionCode.toUpperCase()) {
 			    case "0": // 心跳上报
 				    reportService.heartOfBLE(params);
