@@ -36,9 +36,9 @@ public class Orders extends Model<Orders> {
 	/** device_id */
 	@TableField(value = "device_id")
 	private String deviceId;
-	/** price */
-	@TableField(value = "price")
-	private String price;
+	/** total_amount */
+	@TableField("total_amount")
+	private Double totalAmount;// 订单总金额
 	/** description */
 	@TableField(value = "description")
 	private String description;
@@ -136,22 +136,12 @@ public class Orders extends Model<Orders> {
 		this.deviceId = deviceId;
 	}
 
-	/**
-	 * 获取 price
-	 *
-	 * @return: String price
-	 */
-	public String getPrice() {
-		return this.price;
+	public Double getTotalAmount() {
+		return totalAmount;
 	}
 
-	/**
-	 * 设置 price
-	 *
-	 * @param: price price
-	 */
-	public void setPrice(String price) {
-		this.price = price;
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 
 	/**
