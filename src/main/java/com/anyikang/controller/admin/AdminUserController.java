@@ -16,13 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
-import com.anyikang.model.RescueCenter;
-import com.anyikang.model.RescueTeam;
 import com.anyikang.model.admin.AdminRole;
 import com.anyikang.model.admin.AdminUser;
 import com.anyikang.model.vo.admin.UserVo;
-import com.anyikang.service.RescueTeamService;
-import com.anyikang.service.admin.AdminPermissionService;
 import com.anyikang.service.admin.AdminRoleService;
 import com.anyikang.service.admin.AdminUserService;
 import com.anyikang.utils.AssertUtil;
@@ -40,13 +36,9 @@ public class AdminUserController extends BaseController{
 	@Autowired
 	private AdminUserService adminUserService;
 	@Autowired
-	private AdminPermissionService aminPermissionService;
-	@Autowired
 	private AdminRoleService adminRoleService;
 	@Resource
 	private CredentialsMatcher credentialsMatcher;
-	@Autowired
-	private RescueTeamService rescueTeamService;
 
 	/**
 	 * 添加用户

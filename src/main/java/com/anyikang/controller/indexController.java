@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anyikang.base.BaseResponse;
 import com.anyikang.base.Constants;
 import com.anyikang.model.admin.AdminPermission;
+import com.anyikang.service.AlarmService;
 import com.anyikang.service.DeviceService;
-import com.anyikang.service.RescueTeamService;
 import com.anyikang.service.admin.AdminPermissionService;
+import com.anyikang.utils.MapAPIUtil;
 
 /**
  * 
@@ -30,7 +31,7 @@ public class indexController {
     @Autowired
     private DeviceService deviceService;
     @Autowired
-    private RescueTeamService rescueTeamService;
+    private AlarmService alarmService;
     
     @RequestMapping({"/index"})
     public BaseResponse<?> index(Integer roleId,String tokenId){
@@ -47,7 +48,7 @@ public class indexController {
     }
     
     /**
-     * 除总中心外
+     * 首页地图显示
      * @param tokenId
      * @return
      */
@@ -56,35 +57,28 @@ public class indexController {
     	BaseResponse<Map<String,Object>> responseMessage = new BaseResponse<>();
     	Map<String,Object> map=new HashMap<>();
     	
-    	long userId=Long.parseLong(tokenId.split("==")[1]);
-    	//查询该用户所对应的救援大队区域码,如果为0是全国总队,直接查询全部
-    	Map<String,Object> cityCodeMap =rescueTeamService.findCenterCode(userId);
-    	if(cityCodeMap==null){
-    		responseMessage.setStatus(0);
-    		responseMessage.setMsg("查询失败,无对应的救援中心");
-    		return responseMessage;
-    		
+		//查询求救者位置 
+		List<Map<String,Object>>  deviceList=deviceService.getAllDevices();
+    	if(deviceList!=null&&deviceList.size()>0){
+    		for(Map<String,Object> deviceMap:deviceList){
+    			if(deviceMap.containsKey("famillyPhones")){
+    				String [] phone =deviceMap.get("famillyPhones").toString().split(",");
+    				deviceMap.put("famillyPhones", phone);
+    			}
+    		}
+    		map.put("deviceList", deviceList);
+    	}else{
+    		map.put("deviceList", new ArrayList<>());	
     	}
-    	
-		List<String> areaidList=rescueTeamService.getAreas(userId);
-		//查询求救者位置 以及是否被接单
-		List<Map<String,Object>>  deviceList=deviceService.getAllDevicesByAddr(areaidList.toArray(new String[areaidList.size()]));
-
-    		
-    	if(deviceList==null||deviceList.size()==0){
-    		map.put("deviceList", new ArrayList<>());
+    	//查询佩戴者当前报警状态
+    	List<Map<String,Object>> sosList =alarmService.getAllSos();
+    	if(sosList!=null&&sosList.size()>0){
+    		map.put("sosList", sosList);
+    	}else{
+    		map.put("sosList", new ArrayList<>());
     	}
-    	map.put("deviceList", deviceList);
-    	
-    	if(deviceList==null||deviceList.size()==0){
-    		map.put("taskList", new ArrayList<>());
-    	}
-
-    	
     	responseMessage.setData(map);
     	return responseMessage;
     }
-
-
 
 }

@@ -2,18 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.anyikang.dao.DeviceMapper">
 
-	<resultMap type="com.anyikang.model.vo.AlarmVO" id="AlarmVOMap">
-		<id column="alarmId" property="alarmId" />  
-	    <result column="deviceIMEI" property="deviceIMEI"/>  
-	    <result column="deviceId" property="deviceId"/>  
-	    <result column="alarmType" property="alarmType"/>  
-	    <result column="alarmIocationType" property="alarmIocationType"/>  
-	    <result column="alarmLongitude" property="alarmLongitude"/>  
-	    <result column="alarmLatitude" property="alarmLatitude"/>  
-	    <result column="alarmPower" property="alarmPower"/>  
-	    <result column="alarmTime" property="alarmTime"/>  
-	</resultMap>
-	
 
     <select id="findByDeviceNumber" parameterType="java.lang.String" resultType="com.anyikang.model.vo.RescueDevice">
         select 
@@ -30,54 +18,6 @@
          where  t1.imei_code=#{deviceIMEI}
     </select>
     
-    <select id="findByDeviceIMEI" parameterType="java.lang.String" resultType="java.util.HashMap">
-		SELECT
-			t1.deviceId,
-			t1.deviceType,
-			t1.deviceIMEI,
-			t1.deviceName,
-			t1.deviceModel,
-			t1.deviceVersion,
-			t1.deviceMobile,
-			t1.locationMode,
-			t1.timeInterval,
-			t1.alarmControl,
-			t1.deviceStatus,
-			DATE_FORMAT(
-				t1.onlineTime,
-				'%Y-%m-%d %H:%i:%s'
-			) onlineTime,
-			DATE_FORMAT(
-				t1.deviceCreateTime,
-				'%Y-%m-%d %H:%i:%s'
-			) deviceCreateTime,
-			t1.deviceOwnerID,
-			t2.alarmPower,
-			t2.alarmType,
-			DATE_FORMAT(
-				t2.alarmTime,
-				'%Y-%m-%d %H:%i:%s'
-			) alarmTime
-		FROM
-			device t1
-		LEFT JOIN (
-			SELECT
-				deviceId,
-				alarmPower,
-				alarmTime,
-				alarmType
-			FROM
-				alarm
-			WHERE
-				1 = 1
-			ORDER BY
-				alarmTime DESC
-			LIMIT 0,
-			1
-		) t2 ON t1.deviceId = t2.deviceId
-		WHERE
-			t1.deviceIMEI = ${deviceIMEI}
-    </select>
     <select id="findDeviceByImei" parameterType="String" resultType="map">
         SELECT
 			t1.deviceId
@@ -87,139 +27,60 @@
 			t1.deviceIMEI =#{deviceIMEI}
     </select>
     
-    <select id="findDevicesByUserId" parameterType="java.lang.Long" resultType="java.util.HashMap">
-        SELECT DISTINCT
-			t1.deviceId,
-			t1.deviceIMEI,
-			t1.deviceName,
-			t1.deviceModel,
-			t3.teamId
-		FROM
-			device t1
-		JOIN user_device t2 ON t1.deviceId = t2.deviceId
-		LEFT JOIN team t3 ON t2.userId = t3.teamOwnerID
-		WHERE
-			t2.userId = ${userId}
-    </select>
-    
-    <select id="findAlarmInfosByUserId" parameterType="java.lang.Long" resultMap="AlarmVOMap">
-        SELECT DISTINCT
-			t2.deviceIMEI,
-			t3.*
-		FROM
-			user_device t1
-		JOIN device t2 ON t1.deviceId = t2.deviceId
-		JOIN alarm t3 ON t2.deviceId = t3.deviceId
-		WHERE
-			t1.userId = ${userId}
-    </select>
-    
-    <select id="findLastLocation" parameterType="java.lang.Integer" resultType="com.anyikang.model.Location">
-       select locationLatitude,locationLongitude from location where deviceId=#{deviceId} and locationTime=(select MAX(locationTime) from location)
-    </select>
     <select id="getAllDevices" resultType="map">
-           SELECT 
-			     	t2.deviceId,
-					CONCAT(t1.surname,t1.name) as NAME,
+         SELECT 
+					t2.device_id as deviceId,
+					t1.NAME,
 					t1.mobile,
 					t1.address,
-					t1.image_url,
-					t2.deviceIMEI,
-					t2.deviceMobile,
-					t2.onlineTime,
-			        m.locationType,
-			        m.latitude,
-			        m.longitude,
-			        m.locationTime
-			FROM    old_man t1,device t2
-			LEFT JOIN
-					 (
-					    SELECT 
-							      t3.deviceId as deviceId,
-							      t3.locationType as locationType,
-								  t3.locationLongitude as longitude,
-								  t3.locationLatitude as latitude,
-								  t3.regionNumber as regionNumber,
-								  t3.locationTime as locationTime
-					     FROM     location t3 
-                         WHERE    t3.locationTime in (SELECT MAX(l.locationTime) FROM location l GROUP BY l.deviceId)
-                         GROUP BY t3.deviceId) m
-			ON    t2.deviceId=m.deviceId
-			WHERE t2.deviceId=t1.deviceId
+					t2.imei_code as deviceIMEI,
+					t2.online_time as onlineTime,
+				    m.locationType,
+				    m.latitude,
+				    m.longitude,
+				    m.locationTime,
+					t1.famillyPhones
+		   FROM     (SELECT    
+		                        CONCAT(o.surname,o.name) as NAME,
+							    o.mobile,
+							    o.address,
+							    o.device_id,
+					            GROUP_CONCAT(e.mobile) as famillyPhones
+					 FROM       old_man o  
+					 LEFT JOIN  emergency e   
+					 ON         o.old_man_id=e.old_man_id 
+					 GROUP BY   o.old_man_id) t1,device t2
+		   LEFT JOIN
+				    (SELECT 
+								t3.device_id as deviceId,
+								t3.location_type as locationType,
+								t3.latitude as latitude,
+								t3.longitude as longitude,
+								t3.location_time as locationTime
+				     FROM       location t3,(SELECT MAX(l.location_time) as location_time ,l.device_id FROM location l GROUP BY l.device_id) t2 
+				     WHERE      t3.location_time =t2.location_time
+					 AND        t3.device_id=t2.device_id) m
+			ON       t2.device_id=m.deviceId
+			WHERE    t2.device_id=t1.device_id
 			ORDER BY m.locationTime DESC
     </select>
-    
-    <select id="getAllDevicesByAddr" resultType="java.util.HashMap" >
-			SELECT 
-			     	t2.deviceId,
-					CONCAT(t1.surname,t1.name) as NAME,
-					t1.mobile,
-					t1.address,
-					t1.image_url,
-					t2.deviceIMEI,
-					t2.deviceMobile,
-					t2.onlineTime,
-			        m.locationType,
-			        m.latitude,
-			        m.longitude,
-			        m.locationTime,
-			        m.regionNumber
-			       
-			FROM    old_man t1,device t2
-			LEFT JOIN
-					 (SELECT h.*,MAX(h.locationTime)
-                        FROM
-                            (SELECT 
-                                   t3.deviceId as deviceId,
-                                   t3.locationType as locationType,
-                                   t3.locationLongitude as longitude,
-                                   t3.locationLatitude as latitude,
-                                   t3.regionNumber as regionNumber,
-                                   t3.locationTime as locationTime
-                            FROM   location t3
-                            ORDER BY t3.locationTime DESC) h
-                    GROUP BY h.deviceId) m
-			ON    t2.deviceId=m.deviceId
-			WHERE t2.deviceId=t1.deviceId
-			AND    m.regionNumber in
-		  <foreach collection="areaids" item="areaids" index="index" open="(" close=")" separator=",">
-					 #{areaids}
-		  </foreach>
-			ORDER BY m.locationTime DESC
-    </select>
-    
+       
     <insert id="addDevice" parameterType="com.anyikang.model.vo.RescueDevice" useGeneratedKeys="true" keyProperty="deviceId">
         INSERT INTO device (
 			imei_code,
 			device_name,
-			create_time
+			create_time,
+			bluetooth_Status
 		)
 		VALUES
 			(
 			#{deviceIMEI},
 			#{deviceName},
-			#{deviceCreateTime}
+			#{deviceCreateTime},
+			#{bluetoothStatus}
 			)
     </insert>
 
-    <update id="updateDeviceInfo" parameterType="com.anyikang.model.Device">
-        UPDATE device set deviceMobile=#{deviceMobile},locationMode=#{locationMode},
-        timeInterval=#{timeInterval},alarmControl=#{alarmControl},deviceCreateTime=#{deviceCreateTime}
-        where deviceIMEI=#{deviceIMEI}
-    </update>
-
-    
-   <!--实时更新设备状态、设备报警信息、在线时间点  --> 
-    <update id="ModifyDevice" parameterType="com.anyikang.model.Device">
-        UPDATE 
-              device
-        SET   
-              alarmControl =#{alarmControl},
-              deviceStatus =#{deviceStatus},
-              onlineTime =#{onlineTime}
-              
-        WHERE deviceIMEI=#{deviceIMEI}
-    </update>
      <select id="findOldManMsg"  parameterType="java.lang.Integer"  resultType="map">
            SELECT  
 			        d.imei_code     as deviceIMEI,
@@ -305,14 +166,6 @@
      </select>
      
      
-     <select id="findDeviceKinds" resultType="map">
-         SELECT
-		        d.device_name as deviceName,
-		        d.device_id   as deivceId
-		  FROM  device_kinds d
-     </select>
-     
-     
       <!-- 不在线设备 -->
   <select id="offLine" resultType="map">
         SELECT
@@ -362,7 +215,7 @@
 
 		  FROM  device d,location l
 		  WHERE l.device_id=d.device_id
-		  and  d.imei_code=#{deviceImei}
+		  and   d.imei_code=#{deviceImei}
 		  <if test="startTime!=null">
 				and  l.location_time> #{startTime}  
 		  </if>
@@ -397,9 +250,9 @@
                     mobile
                    )
           VALUES  ( 
-                    #{phoneId},
+                    #{emergencyId},
                     #{oldManId},
-                    #{phone}
+                    #{mobile}
                   )
    </insert> 
      <select id="findBluetoothStatus"  parameterType="String" resultType="java.lang.Integer">

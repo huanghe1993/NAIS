@@ -1,30 +1,36 @@
 package com.anyikang.service.impl;
 
-import com.anyikang.dao.AlarmMapper;
-import com.anyikang.model.Alarm;
-import com.anyikang.model.AlarmCustom;
-import com.anyikang.service.AlarmService;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.anyikang.dao.AlarmMapper;
+import com.anyikang.service.AlarmService;
 
 /**
- * Created by huanghe on 2017/3/30.
+ * 
+ * @author LvXiaoxiong
+ * @date 2018/03/09
+ *
  */
 @Service
 public class AlarmServicelmp implements AlarmService{
 
     @Autowired
     private AlarmMapper alarmMapper;
-    @Override
-    public List<Alarm> findAlarmInfoByDeviceId(Integer deviceId) {
-        return alarmMapper.findAlarmInfoByDeviceId(deviceId);
-    }
-
-    @Override
-    public List<Alarm> findAlarmByDeviceAndDateSection(AlarmCustom alarmCustom) {
-        return alarmMapper.findAlarmByDeviceAndDateSection(alarmCustom);
-    }
+	@Override
+	public List<Map<String, Object>> getAllSos() {
+		List<Map<String, Object>> list =alarmMapper.getAllSos();
+		if(list!=null&&list.size()>0){
+			return list;
+		}
+		return null;
+	}
+	@Override
+	public boolean updateIsCall(String alarmId) {
+		int n =alarmMapper.updateRscueType(alarmId);
+		return n==1;
+	}
 }

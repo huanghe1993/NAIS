@@ -2,15 +2,18 @@ package com.anyikang.service.impl;
 
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.anyikang.dao.PayerMapper;
 import com.anyikang.model.Payer;
 import com.anyikang.service.PaymentService;
 
+@Service
 public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
@@ -41,8 +44,11 @@ public class PaymentServiceImpl implements PaymentService {
 	 */
 	@Override
 	public boolean modifypwById(int userId, String newpw) {
-		// TODO Auto-generated method stub
-		return false;
+		Map<String,Object> params = new HashMap<>();
+		params.put("userId", userId);
+		params.put("newpw", newpw);
+		int n =payerMapper.modifypwById(params);
+		return n==1;
 	}
 
 }

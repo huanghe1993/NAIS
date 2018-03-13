@@ -17,8 +17,6 @@ public class UserVo implements Serializable {
 	private String roleDescription;
 	private String roleId;
 	private String originalRoleId;
-	private String rescueTeamId;
-	private String mobile;//电话
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -88,21 +86,6 @@ public class UserVo implements Serializable {
 		this.originalRoleId = originalRoleId;
 	}
 
-	public String getRescueTeamId() {
-		return rescueTeamId;
-	}
-
-	public void setRescueTeamId(String rescueTeamId) {
-		this.rescueTeamId = rescueTeamId;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
 
 
 }

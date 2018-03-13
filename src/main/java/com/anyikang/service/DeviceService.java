@@ -1,13 +1,8 @@
 package com.anyikang.service;
 
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
-
-import com.anyikang.model.Device;
 import com.anyikang.model.OldManMsg;
-import com.anyikang.model.RescueCount;
-import com.anyikang.model.vo.AlarmVO;
 import com.anyikang.model.vo.LocatorDeviceMessage;
 import com.anyikang.model.vo.LocatorDeviceStatus;
 import com.anyikang.model.vo.RescueDevice;
@@ -27,15 +22,6 @@ public interface DeviceService {
 	 */
 	public RescueDevice findByDeviceNumber(String deviceIMEI);
 
-	/**
-	 * 获取通信服务器中的设备信息
-	 * 
-	 * @return
-	 * @throws RemoteException
-	 */
-
-	public List<Map<String,Object>> findDeviceByTeam(long teamId);
-
 
 	/**
 	 * 添加设备
@@ -44,27 +30,6 @@ public interface DeviceService {
 	 */
 	public boolean addDevice(RescueDevice device);
 	
-	/**
-	 * 获取用户的所有设备
-	 * @param deviceId
-	 * @return
-	 */
-	public List<Map<String,Object>> getDevicesByUserId(long userId);
-	
-	/**
-	 * 获取用户的所有设备的报警信息
-	 * @param deviceId
-	 * @return
-	 */
-	public List<AlarmVO> getAlarmInfosByUserId(long userId);
-	
-	/**
-	 * 获取某个区域内的所有终端设备信息以及是否报警是否有人接单
-	 * @param deviceId
-	 * @return
-	 */
-	public List<Map<String,Object>> getAllDevicesByAddr(String[] areaids);
-
 
 	/**
 	 * 以总队身份查询
@@ -78,11 +43,6 @@ public interface DeviceService {
 	 */
 	public List<Map<String, Object>> findDevice();
 
-	/**
-	 * 查询所有设备种类
-	 * @return
-	 */
-	public List<Map<String, Object>> findDeviceKinds();
 
 
 	/**
@@ -126,20 +86,6 @@ public interface DeviceService {
 	 */
 	List<LocatorDeviceStatus> queryDeviceStatusMessage(String deviceImei);
 
-
-	/**
-	 * 查询各个省的救援统计情况
-	 * @param userId
-	 * @return
-	 */
-	public List<RescueCount> rescueCount(Integer userId);
-
-	/**
-	 * 查询各个市的救援统计情况
-	 * @param rescueCenterId
-	 * @return
-	 */
-	public List<RescueCount> rescueCenterId(String rescueCenterId);
 
 	/**
 	 * 添加亲情号
@@ -232,7 +178,7 @@ public interface DeviceService {
 	 * @param phone
 	 * @return
 	 */
-	public boolean addParentPhone(String oldManId, String phone);
+	public Map<String, Object> addParentPhone(String oldManId, String phone);
 
 
 

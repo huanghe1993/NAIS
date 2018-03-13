@@ -16,6 +16,7 @@ import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
 import com.anyikang.model.vo.LocatorDeviceMessage;
 import com.anyikang.model.vo.LocatorDeviceStatus;
+import com.anyikang.service.AlarmService;
 import com.anyikang.service.DeviceService;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
@@ -33,34 +34,11 @@ public class RescueDeviceController extends BaseController{
      
 	@Autowired
     private DeviceService deviceService;
+	
+	@Autowired
+    private AlarmService alarmService;
 
 
-
- 	/**
- 	 * 查询所有设备种类
- 	 * @param tokenId
- 	 * @return
- 	 */
- 	@RequestMapping(value ="device/findDeviceKinds", method = RequestMethod.GET)
- 	public BaseResponse<?> findDeviceKinds(String tokenId) {
- 		BaseResponse<List<Map<String,Object>>> baseResponse = new BaseResponse<>();
- 		baseResponse.setTime(System.currentTimeMillis());
-  
-    	List<Map<String,Object>> deviceList =deviceService.findDeviceKinds();
-    	if(deviceList!=null&&deviceList.size()!=0){
-    		baseResponse.setStatus(1);
- 			baseResponse.setMsg("查询成功");
- 			baseResponse.setData(deviceList);
- 			return baseResponse;
-    	}
-    	baseResponse.setStatus(0);
-		baseResponse.setMsg("查询失败");
-		return baseResponse;
-		
-	}
-
- 	
- 	
  	/**
  	 * 查询所有设备
  	 * @param tokenId
@@ -230,14 +208,14 @@ public class RescueDeviceController extends BaseController{
     
     
     /**
-     * 查询当前设备所有轨迹信息
+     * 查询所有报警信息
      * @param imeiCode
      * @param startTime
      * @param endTime
      * @return
      */
     @GetMapping("query/alarmRecord")
-    public BaseResponse<?> queryAlarmRecord(int pageIndex, int pageSize,String deviceIMEI) {
+    public BaseResponse<?> queryAlarmRecord(int pageIndex, int pageSize,@RequestParam(value="deviceIMEI",required=false) String deviceIMEI) {
     	BaseResponse<PageInfo<List<Map<String,Object>>>> responseMessage = new BaseResponse<>();
     	PageMethod.startPage(pageIndex, pageSize);
     	@SuppressWarnings("unchecked")
@@ -259,5 +237,38 @@ public class RescueDeviceController extends BaseController{
     }
     
 	
-	
+    
+    /**
+     * 确认依据给监护人打过电话,修改报警状态
+     * @param imeiCode
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping("update/alarmStatus")
+    public BaseResponse<?> updateIsCall(String alarmId) {
+    	BaseResponse<PageInfo<List<Map<String,Object>>>> responseMessage = new BaseResponse<>();
+    
+		
+    	if(alarmId==null){
+    		responseMessage.setMsg("参数不允许为空");
+    		responseMessage.setStatus(0);
+    		return responseMessage;
+    	}
+    	if(alarmId.trim().isEmpty()){
+    		responseMessage.setMsg("参数不允许为空");
+    		responseMessage.setStatus(0);
+    		return responseMessage;
+    	}
+    	boolean flag =alarmService.updateIsCall(alarmId);
+    	if(flag){
+    		responseMessage.setMsg("确认成功");
+    		responseMessage.setStatus(1);
+    		return responseMessage;
+    	}
+    	responseMessage.setMsg("确认失败");
+		responseMessage.setStatus(0);
+        return responseMessage;
+    }
+    
 }

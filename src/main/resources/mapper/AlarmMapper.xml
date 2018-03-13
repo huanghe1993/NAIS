@@ -9,19 +9,6 @@
         <result column="alarmTime" property="alarmTime" />
     </resultMap>
     -->
-    <select id="findAlarmInfoByDeviceId" parameterType="java.lang.Integer" resultType="com.anyikang.model.Alarm">
-        SELECT * from alarm where device_id=#{deviceId}
-    </select>
-
-    <!--查询报警信息-->
-    <select id="findAlarmByDeviceAndDateSection" parameterType="com.anyikang.model.AlarmCustom" resultType="com.anyikang.model.Alarm">
-          select * from alarm  where device_id = #{deviceId} 
-          <if test="alarmType!=-1">
-	        and alarm_type =#{alarmType}
-	      </if>
-          and alarm_time between #{startDate} and #{endDate} 
-          order by alarmId desc
-    </select>
 
     <insert id="addAlarmMessage" parameterType="com.anyikang.model.Alarm">
         INSERT INTO alarm
@@ -31,6 +18,7 @@
               rescue_type,
               alarm_power,
               alarm_time,
+              alarm_addr,
               is_call
               )
         VALUES
@@ -41,78 +29,41 @@
 			#{rescueType},
 			#{alarmPower},
 			#{alarmTime},
+			#{alarmAddr},
 			#{isCall}
 			)
     </insert>
     
-    <insert id="addAlarmTask" parameterType="com.anyikang.model.vo.RescueTask">
-         INSERT  INTO  rescue_task
-             (task_id,
-              addr,
-              alarm_id,
-              status,
-              region_number,
-              create_time,
-              receive_time)
-         VALUES(
-              #{taskId},
-              #{address},
-              #{alarmId},
-              #{status},
-              #{regionNumber},
-              #{createTime},
-              #{receiveTime}
-             )
-    </insert>
-    
-    <select id="findAlarmTast" parameterType="String" resultType="map">
-       SELECT
-			  r.task_id,
-			  r.`status`
-		from  rescue_task r,alarm a,device d,location l
-		where r.alarmId=a.alarmId
-        and   a.locationId=l.locationId
-        and   l.device_id=d.device_id
-        and   (r.`status`=1 OR r.`status`=2)
-		and   d.deviceIMEI=#{imeiCode}
-    </select>
-    
     <select id="findAlarmByImei"  parameterType="String" resultType="map">
            SELECT
-			      a.alarmId as alarmId
+			      a.alarm_id as alarmId
 			from  alarm a,device d,location l
-			WHERE a.locationId=l.locationId
-            and   l.deviceId=d.deviceId
-			and   a.rescueType=1
-			and   d.deviceIMEI=#{deviceIMEI}
-    </select>
-    
-    <select id="findRescueTeam"  parameterType="String" resultType="map">
-          SELECT 
-                rescue_team_id  AS  rescueTeamId
-          FROM  
-                rescue_team
-          WHERE 
-                addr=#{address}
- 
+			WHERE a.location_id=l.location_id
+            and   l.device_id=d.device_id
+			and   a.is_call=1
+			and   d.imei_code=#{deviceIMEI}
     </select>
     
         <update id="updateRscueType" parameterType="String"> 
             UPDATE
                   alarm a 
-            SET   a.rescueType=2
-            WHERE a.alarmId=#{alarmId}
+            SET   a.is_call=2
+            WHERE a.alarm_id=#{alarmId}
     </update>
 
-   <select id="findAlarmTast" parameterType="map" resultType="map">
-       SELECT
-			  r.task_id,
-			  r.`status`
-		from  rescue_task r,alarm a,device d,location l
-		where r.alarmId=a.alarmId
-        and   a.locationId=l.locationId
-        and   l.deviceId=d.deviceId
-        and   (r.`status`=1 OR r.`status`=2)
-		and   d.deviceIMEI=#{imeiCode}
+    <select id="getAllSos" resultType="map">
+        SELECT
+		      d.device_id  as deviceId,
+		      d.imei_code  as deviceIMEI,
+		      l.latitude   as latitude, 
+              l.longitude  as longitude,
+		      a.alarm_id   as alarmId,
+		      a.alarm_addr as alarmAddr,
+		      a.is_call    as isCall,
+		      a.alarm_time as alarmTime	      
+		FROM  device d,location l,alarm a
+		WHERE d.device_id=l.device_id
+		AND   l.location_id=a.location_id
+		AND   (a.is_call=1 OR a.is_call=2)
     </select>
 </mapper>

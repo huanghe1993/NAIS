@@ -84,8 +84,8 @@ public class OrdersController extends BaseController {
 		return baseResponse;
 	}
 
- 	@RequestMapping(value ="/updateOldMan", method = RequestMethod.POST)
- 	public BaseResponse<?> updateOldMan(Orders orders) {
+ 	@RequestMapping(value ="/updateById", method = RequestMethod.POST)
+ 	public BaseResponse<?> updateById(Orders orders) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
         
@@ -107,7 +107,6 @@ public class OrdersController extends BaseController {
     	
     	BaseResponse<String>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
-    	//首先亲情号,再删佩戴者
     	boolean  flags =ordersService.deleteById(ordersId);
     	if(flags){
 			 baseResponse.setMsg("删除成功");
