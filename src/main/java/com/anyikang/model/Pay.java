@@ -17,14 +17,11 @@ public class Pay extends Model<Pay> {
 	 */
 	private static final long serialVersionUID = -5999883407943621728L;
 
-	@TableId(value = "id", type = IdType.UUID)
-	private String id;
+	@TableId(value = "pay_id", type = IdType.UUID)
+	private String payId;
 
 	@TableField(value = "order_id")
 	private Integer orderId;
-
-	@TableField(value = "pay_gift_bag")
-	private String payGiftBag;
 
 	@TableField(value = "pay_type")
 	private String payType;
@@ -35,7 +32,7 @@ public class Pay extends Model<Pay> {
 	@TableField(value = "is_pay")
 	private Integer isPay;
 
-	// 支付方式（0：阿里支付 1：PayPal支付）
+	// 支付方式（0：阿里支付 1：微信支付）
 	@TableField(value = "pay_method")
 	private Integer payMethod;
 
@@ -43,15 +40,17 @@ public class Pay extends Model<Pay> {
 	@TableField(value = "trade_code")
 	private String tradeCode;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
+	
 
 	
+
+	public String getPayId() {
+		return payId;
+	}
+
+	public void setPayId(String payId) {
+		this.payId = payId;
+	}
 
 	public Integer getOrderId() {
 		return orderId;
@@ -61,13 +60,6 @@ public class Pay extends Model<Pay> {
 		this.orderId = orderId;
 	}
 
-	public String getPayGiftBag() {
-		return payGiftBag;
-	}
-
-	public void setPayGiftBag(String payGiftBag) {
-		this.payGiftBag = payGiftBag;
-	}
 
 	public String getPayType() {
 		return payType;
@@ -111,6 +103,6 @@ public class Pay extends Model<Pay> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.payId;
 	}
 }

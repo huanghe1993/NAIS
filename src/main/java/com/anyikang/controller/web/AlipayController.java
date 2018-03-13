@@ -101,7 +101,6 @@ public class AlipayController{
 			        
 			        Pay pay=new Pay();
 		        	pay.setOrderId(userOrder.getOrdersId());
-		        	pay.setPayGiftBag(userOrder.getName());
 		        	pay.setPayTime(new Date());
 		        	pay.setPayMethod(0);
 		        	pay.setTradeCode(trade_no);
