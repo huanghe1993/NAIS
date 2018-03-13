@@ -197,7 +197,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.7</version>
 		</dependency>
-		
+		<dependency>
+         <groupId>com.alipay</groupId>
+         <artifactId>sdk-java</artifactId>
+         <version>20180104135026</version>
+   </dependency>
 
 	</dependencies>
 
