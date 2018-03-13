@@ -28,10 +28,10 @@ import com.anyikang.service.PayService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 
 /**
+ * 
  * @author wangwei
- * @date 2018年1月18日
+ * @date 2018年3月13日
  */
-
 @RestController
 @RequestMapping("/web/alipay")
 public class AlipayController{
