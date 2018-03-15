@@ -17,8 +17,8 @@ public class Pay extends Model<Pay> {
 	 */
 	private static final long serialVersionUID = -5999883407943621728L;
 
-	@TableId(value = "pay_id", type = IdType.UUID)
-	private String payId;
+	@TableId(value = "id", type = IdType.UUID)
+	private String id;
 
 	@TableField(value = "order_id")
 	private Integer orderId;
@@ -40,16 +40,12 @@ public class Pay extends Model<Pay> {
 	@TableField(value = "trade_code")
 	private String tradeCode;
 
-	
-
-	
-
-	public String getPayId() {
-		return payId;
+	public String getId() {
+		return id;
 	}
 
-	public void setPayId(String payId) {
-		this.payId = payId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Integer getOrderId() {
@@ -59,7 +55,6 @@ public class Pay extends Model<Pay> {
 	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
 	}
-
 
 	public String getPayType() {
 		return payType;
@@ -103,6 +98,6 @@ public class Pay extends Model<Pay> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.payId;
+		return this.id;
 	}
 }

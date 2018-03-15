@@ -14,8 +14,8 @@ import com.baomidou.mybatisplus.enums.IdType;
  * @author wangwei
  * @date 2018年3月7日
  */
-@TableName("orders")
-public class Orders extends Model<Orders> {
+@TableName("user_order")
+public class UserOrder extends Model<UserOrder> {
 
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class Orders extends Model<Orders> {
 	private static final long serialVersionUID = -6002905339326793982L;
 	/** orders_id */
 	@TableId(value = "id", type = IdType.UUID)
-	private Integer ordersId;
+	private Integer id;
 	/** user_id */
 	@TableField(value = "user_id")
 	private Integer userId;
@@ -46,22 +46,13 @@ public class Orders extends Model<Orders> {
 	@TableField(value = "create_time")
 	private Date createTime;
 
-	/**
-	 * 获取 ordersId
-	 *
-	 * @return: Integer orders_id
-	 */
-	public Integer getOrdersId() {
-		return this.ordersId;
+	
+	public Integer getId() {
+		return id;
 	}
 
-	/**
-	 * 设置 ordersId
-	 *
-	 * @param: ordersId orders_id
-	 */
-	public void setOrdersId(Integer ordersId) {
-		this.ordersId = ordersId;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	/**
@@ -188,7 +179,7 @@ public class Orders extends Model<Orders> {
 	@Override
 	protected Serializable pkVal() {
 		// TODO Auto-generated method stub
-		return this.ordersId;
+		return this.id;
 	}
 
 }

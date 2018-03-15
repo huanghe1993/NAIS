@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.anyikang.base.BaseResponse;
 import com.anyikang.components.pay.alipay.AlipayService;
-import com.anyikang.model.Orders;
+import com.anyikang.model.UserOrder;
 import com.anyikang.model.Pay;
-import com.anyikang.service.OrdersService;
+import com.anyikang.service.UserOrderService;
 import com.anyikang.service.PayService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 
@@ -41,7 +41,7 @@ public class AlipayController{
 	@Autowired
     private AlipayService alipayService;
 	@Autowired
-	private OrdersService ordersService;
+	private UserOrderService ordersService;
 	@Autowired
     private PayService payService;
 	
@@ -49,7 +49,7 @@ public class AlipayController{
 	  public BaseResponse<?> pay(String orderId) {
 		BaseResponse<String> responseMessage = new BaseResponse<>();
 		
-		Orders userOrder=ordersService.selectById(orderId);
+		UserOrder userOrder=ordersService.selectById(orderId);
 	    
 	 // 封装请求支付信息
 	    AlipayTradeWapPayModel model=new AlipayTradeWapPayModel();
@@ -94,13 +94,13 @@ public class AlipayController{
 					System.out.println("--------------------------"+trade_status);
 					
 					
-					EntityWrapper<Orders> entityWrapper=new EntityWrapper();
-					entityWrapper.setEntity(new Orders());
+					EntityWrapper<UserOrder> entityWrapper=new EntityWrapper();
+					entityWrapper.setEntity(new UserOrder());
 			        entityWrapper.where("orders_code={0}", out_trade_no);
-			        Orders userOrder=ordersService.selectOne(entityWrapper);
+			        UserOrder userOrder=ordersService.selectOne(entityWrapper);
 			        
 			        Pay pay=new Pay();
-		        	pay.setOrderId(userOrder.getOrdersId());
+		        	pay.setOrderId(userOrder.getId());
 		        	pay.setPayTime(new Date());
 		        	pay.setPayMethod(0);
 		        	pay.setTradeCode(trade_no);
@@ -117,7 +117,7 @@ public class AlipayController{
 				        if(userOrder!=null){
 				        	EntityWrapper<Pay> payWrapper=new EntityWrapper();
 							payWrapper.setEntity(new Pay());
-							payWrapper.where("order_id={0}", userOrder.getOrdersId());
+							payWrapper.where("order_id={0}", userOrder.getId());
 							Pay notPay=payService.selectOne(payWrapper);
 							
 							if(notPay!=null){

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
-import com.anyikang.model.Orders;
-import com.anyikang.service.OrdersService;
+import com.anyikang.model.UserOrder;
+import com.anyikang.service.UserOrderService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -24,19 +24,19 @@ import com.baomidou.mybatisplus.plugins.Page;
  */
 @RestController
 @RequestMapping("web/orders")
-public class OrdersController extends BaseController {
+public class UserOrderController extends BaseController {
 	
     @Autowired
-    private OrdersService ordersService;
+    private UserOrderService ordersService;
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET})
     public BaseResponse<?> list(int pageNum,int pageSize){
     	
-    	BaseResponse<Page<Orders>>  baseResponse = new BaseResponse<>();
+    	BaseResponse<Page<UserOrder>>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
 		
-		EntityWrapper<Orders> entityWrapper = new EntityWrapper<Orders>();
-		Page<Orders> page =ordersService.selectPage(new Page<Orders>(pageNum, pageSize), entityWrapper);
+		EntityWrapper<UserOrder> entityWrapper = new EntityWrapper<UserOrder>();
+		Page<UserOrder> page =ordersService.selectPage(new Page<UserOrder>(pageNum, pageSize), entityWrapper);
 		if(page!=null){
 			baseResponse.setData(page);
 			baseResponse.setMsg("查询成功");
@@ -52,10 +52,10 @@ public class OrdersController extends BaseController {
     @RequestMapping(value = "/{ordersId}", method = {RequestMethod.GET})
     public BaseResponse<?> view(@PathVariable("ordersId") String ordersId){
     	
-    	BaseResponse<Orders>  baseResponse = new BaseResponse<>();
+    	BaseResponse<UserOrder>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
     	
-    	Orders orders=ordersService.selectById(ordersId);
+    	UserOrder orders=ordersService.selectById(ordersId);
     	
     	if(orders!=null){
     		baseResponse.setData(orders);
@@ -69,7 +69,7 @@ public class OrdersController extends BaseController {
     }
 	
  	@RequestMapping(value ="/add", method = RequestMethod.POST)
- 	public BaseResponse<?> add(Orders orders) {
+ 	public BaseResponse<?> add(UserOrder orders) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
  		
@@ -85,7 +85,7 @@ public class OrdersController extends BaseController {
 	}
 
  	@RequestMapping(value ="/updateById", method = RequestMethod.POST)
- 	public BaseResponse<?> updateById(Orders orders) {
+ 	public BaseResponse<?> updateById(UserOrder orders) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
         
