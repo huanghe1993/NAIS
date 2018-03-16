@@ -16,9 +16,11 @@ public class RescueDevice {
     public String deviceMobile;
     public int devicePower;
     public String deviceStatus;
+    public int bluetoothStatus;
+    public Date serviceExpirationTime;
     public Date onlineTime;
     public Date deviceCreateTime;
-    public int bluetoothStatus;
+
 
     
     public RescueDevice(){
@@ -27,7 +29,8 @@ public class RescueDevice {
 
 
 	public RescueDevice(int deviceId, String deviceIMEI, String deviceName, String deviceMobile, int devicePower,
-			String deviceStatus, Date onlineTime, Date deviceCreateTime, int bluetoothStatus) {
+			String deviceStatus, Date onlineTime, Date deviceCreateTime, int bluetoothStatus,
+			Date serviceExpirationTime) {
 		super();
 		this.deviceId = deviceId;
 		this.deviceIMEI = deviceIMEI;
@@ -38,6 +41,7 @@ public class RescueDevice {
 		this.onlineTime = onlineTime;
 		this.deviceCreateTime = deviceCreateTime;
 		this.bluetoothStatus = bluetoothStatus;
+		this.serviceExpirationTime = serviceExpirationTime;
 	}
 
 
@@ -128,6 +132,16 @@ public class RescueDevice {
 
 	public void setBluetoothStatus(int bluetoothStatus) {
 		this.bluetoothStatus = bluetoothStatus;
+	}
+
+
+	public Date getServiceExpirationTime() {
+		return serviceExpirationTime;
+	}
+
+
+	public void setServiceExpirationTime(Date serviceExpirationTime) {
+		this.serviceExpirationTime = serviceExpirationTime;
 	}
 
     

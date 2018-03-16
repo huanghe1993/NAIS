@@ -9,14 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
+import com.anyikang.model.PayList;
+import com.anyikang.model.PayStatus;
 import com.anyikang.model.UserOrder;
 import com.anyikang.service.UserOrderService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.page.PageMethod;
 
 /**
  * @author wangwei
@@ -136,6 +141,55 @@ public class UserOrderController extends BaseController {
 	}
 
 
+ 	/**
+ 	 * 查询缴费状态
+ 	 * @param pageSize
+ 	 * @param pageIndex
+ 	 * @param deviceIMEI
+ 	 * @return
+ 	 */
+ 	@RequestMapping(value = "/queryPayStatus", method = {RequestMethod.GET})
+    public BaseResponse<?> queryPayStatus(int pageSize,int pageIndex, @RequestParam(required=false) String deviceIMEI){
+    	BaseResponse<PageInfo<List<PayStatus>>>  baseResponse = new BaseResponse<>();
+    	baseResponse.setTime(System.currentTimeMillis());
+    	PageMethod.startPage(pageIndex, pageSize);
+    	@SuppressWarnings("unchecked")
+		PageInfo<List<PayStatus>>  pageInfo =page(ordersService.queryPayStatus(deviceIMEI));
+    	if(pageInfo!=null&&pageInfo.getList().size()>0){
+			 baseResponse.setMsg("查询成功");
+		     baseResponse.setStatus(1);
+		     baseResponse.setData(pageInfo);
+		     return baseResponse;
+    	}
+		baseResponse.setMsg("查询失败");
+		baseResponse.setStatus(0);
+		return baseResponse;
+    }
+	 
+	 /**
+	  * 查询缴费记录
+	  * @param pageSize
+	  * @param pageIndex
+	  * @param deviceIMEI
+	  * @return
+	  */
+    @RequestMapping(value = "/queryPayList", method = {RequestMethod.GET})
+    public BaseResponse<?> queryPayList(int pageSize,int pageIndex, @RequestParam(required=false) String deviceIMEI){
+	   	BaseResponse<PageInfo<List<PayList>>>  baseResponse = new BaseResponse<>();
+	   	baseResponse.setTime(System.currentTimeMillis());
+	   	PageMethod.startPage(pageIndex, pageSize);
+	   	@SuppressWarnings("unchecked")
+			PageInfo<List<PayList>>  pageInfo =page(ordersService.queryPayList(deviceIMEI));
+	   	if(pageInfo!=null&&pageInfo.getList().size()>0){
+				 baseResponse.setMsg("查询成功");
+			     baseResponse.setStatus(1);
+			     baseResponse.setData(pageInfo);
+			     return baseResponse;
+	   	}
+			baseResponse.setMsg("查询失败");
+			baseResponse.setStatus(0);
+			return baseResponse;
+	   }
   
 
 }

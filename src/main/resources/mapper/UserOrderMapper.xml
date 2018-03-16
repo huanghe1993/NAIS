@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.anyikang.dao.UserOrderMapper">
-
+      <select id="queryPayStatus" parameterType="String" resultType="com.anyikang.model.PayStatus">
+        SELECT
+		      o.old_man_id as oldManId,
+		      CONCAT(o.surname,o.`name`) as wearerName,
+		      (CASE o.sex when 0 then '女' when 1 then '男'  END)  as  sex,
+		      o.age   as  age,
+		      d.imei_code as deviceIMEI,
+		      d.service_expiration_time as serviceExpirationTime
+		FROM  device d,old_man o
+		WHERE d.device_id=o.device_id
+		<if test="_parameter!=null">
+		 AND  d.imei_code=#{deviceIMEI}
+		</if>
+		ORDER BY d.service_expiration_time DESC
+    </select>
+    <select id="queryPayList" parameterType="String" resultType="com.anyikang.model.PayList">
+        SELECT
+		      o.order_id as olderId,
+		      g.mobile as payMobile,
+		      d.imei_code as deviceIMEI,
+		      CONCAT(ol.surname,ol.name) as wearerName,
+		      o.total_amount as  totalAmount,
+		      o.create_time as orderCreateTime,
+		      p.pay_time as payTime
+		FROM  guardian g,orders o,pay p,device d,old_man ol
+		WHERE g.user_id=o.user_id
+		AND   o.order_id=p.order_id
+		AND   o.device_id=d.device_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+		AND   d.device_id=ol.device_id
+	   <if test="_parameter!=null">
+		AND   d.imei_code=#{deviceIMEI}
+	   </if>
+	    ORDER BY p.pay_time  DESC
+    </select>
 </mapper>
