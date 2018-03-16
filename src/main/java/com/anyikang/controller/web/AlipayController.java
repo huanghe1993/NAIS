@@ -53,8 +53,8 @@ public class AlipayController{
 	    
 	 // 封装请求支付信息
 	    AlipayTradeWapPayModel model=new AlipayTradeWapPayModel();
-	    model.setOutTradeNo(userOrder.getOrdersCode());
-	    model.setSubject(userOrder.getName());
+	    model.setOutTradeNo(userOrder.getOrderCode());
+	    model.setSubject(userOrder.getOrderName());
 	    model.setTotalAmount(Double.toString(userOrder.getTotalAmount()));
 	    model.setBody(userOrder.getDescription());
 	    

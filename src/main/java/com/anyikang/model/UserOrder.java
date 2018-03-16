@@ -21,18 +21,16 @@ public class UserOrder extends Model<UserOrder> {
 	 * 
 	 */
 	private static final long serialVersionUID = -6002905339326793982L;
-	/** orders_id */
+	/** id */
 	@TableId(value = "id", type = IdType.UUID)
-	private Integer id;
+	private String id;
 	/** user_id */
 	@TableField(value = "user_id")
-	private Integer userId;
-	/** orders_code */
-	@TableField(value = "orders_code")
-	private String ordersCode;
-	/** name */
-	@TableField(value = "name")
-	private String name;
+	private String userId;
+	@TableField(value = "order_code")
+	private String orderCode;
+	@TableField(value = "order_name")
+	private String orderName;
 	/** device_id */
 	@TableField(value = "device_id")
 	private String deviceId;
@@ -46,67 +44,36 @@ public class UserOrder extends Model<UserOrder> {
 	@TableField(value = "create_time")
 	private Date createTime;
 
-	
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	/**
-	 * 获取 userId
-	 *
-	 * @return: Integer user_id
-	 */
-	public Integer getUserId() {
-		return this.userId;
+	public String getUserId() {
+		return userId;
 	}
 
-	/**
-	 * 设置 userId
-	 *
-	 * @param: userId user_id
-	 */
-	public void setUserId(Integer userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	/**
-	 * 获取 ordersCode
-	 *
-	 * @return: String orders_code
-	 */
-	public String getOrdersCode() {
-		return this.ordersCode;
+	public String getOrderName() {
+		return orderName;
 	}
 
-	/**
-	 * 设置 ordersCode
-	 *
-	 * @param: ordersCode orders_code
-	 */
-	public void setOrdersCode(String ordersCode) {
-		this.ordersCode = ordersCode;
+	public void setOrderName(String orderName) {
+		this.orderName = orderName;
 	}
 
-	/**
-	 * 获取 name
-	 *
-	 * @return: String name
-	 */
-	public String getName() {
-		return this.name;
+	public String getOrderCode() {
+		return orderCode;
 	}
 
-	/**
-	 * 设置 name
-	 *
-	 * @param: name name
-	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
 	}
 
 	/**

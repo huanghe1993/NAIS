@@ -21,10 +21,7 @@ public class Pay extends Model<Pay> {
 	private String id;
 
 	@TableField(value = "order_id")
-	private Integer orderId;
-
-	@TableField(value = "pay_type")
-	private String payType;
+	private String orderId;
 
 	@TableField(value = "pay_time")
 	private Date payTime;
@@ -40,6 +37,9 @@ public class Pay extends Model<Pay> {
 	@TableField(value = "trade_code")
 	private String tradeCode;
 
+	@TableField(value = "create_time")
+	private Date createTime;
+
 	public String getId() {
 		return id;
 	}
@@ -48,20 +48,12 @@ public class Pay extends Model<Pay> {
 		this.id = id;
 	}
 
-	public Integer getOrderId() {
+	public String getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(Integer orderId) {
+	public void setOrderId(String orderId) {
 		this.orderId = orderId;
-	}
-
-	public String getPayType() {
-		return payType;
-	}
-
-	public void setPayType(String payType) {
-		this.payType = payType;
 	}
 
 	public Date getPayTime() {
@@ -94,6 +86,14 @@ public class Pay extends Model<Pay> {
 
 	public void setTradeCode(String tradeCode) {
 		this.tradeCode = tradeCode;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	@Override
