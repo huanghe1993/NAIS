@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.anyikang.dao.PayerMapper">
-    <select id="findByPhone" parameterType="String" resultType="com.anyikang.model.Payer">
+<mapper namespace="com.anyikang.dao.UserMapper">
+    <select id="findByPhone" parameterType="String" resultType="com.anyikang.model.User">
          SELECT p.*
-         FROM  payer p
+         FROM  user p
          WHERE p.mobile=#{mobile}
     </select>
     
-    <insert id="insertPayer" parameterType="com.anyikang.model.Payer" >
-        INSERT INTO payer
+    <insert id="insertUser" parameterType="com.anyikang.model.User" >
+        INSERT INTO user
 		         (mobile,
 		          password,
 		          create_time
@@ -19,16 +19,16 @@
 		          #{createTime}
 		          )
     </insert>
-    <select id="selectByMap" parameterType="map" resultType="com.anyikang.model.Payer">
+    <select id="selectByMap" parameterType="map" resultType="com.anyikang.model.User">
          SELECT p.*
-         FROM   payer p
+         FROM   user p
          WHERE  p.mobile=#{mobile}
          AND    p.password=#{password}
     </select>
     <update id="modifypwById" parameterType="map" >
-         UPDATE payer
+         UPDATE user
          SET    password =#{newpw}
-         WHERE  user_id =#{userId}
+         WHERE  id =#{id}
     </update>
   
 </mapper>

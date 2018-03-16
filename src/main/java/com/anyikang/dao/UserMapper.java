@@ -3,30 +3,30 @@ package com.anyikang.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.anyikang.model.Payer;
+import com.anyikang.model.User;
 
-public interface PayerMapper {
+public interface UserMapper {
 
 	/**
 	 * 查询支付用户
 	 * @param mobile
 	 * @return
 	 */
-	public Payer findByPhone(String mobile);
+	public User findByPhone(String mobile);
 
 	/**
 	 * 添加支付用户
 	 * @param appUser
 	 * @return
 	 */
-	public int insertPayer(Payer appUser);
+	public int insertUser(User appUser);
 
 	/**
 	 * 验证用户名密码
 	 * @param map
 	 * @return
 	 */
-	public List<Payer> selectByMap(Map<String, Object> map);
+	public List<User> selectByMap(Map<String, Object> map);
 
 	/**
 	 * 

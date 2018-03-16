@@ -20,9 +20,9 @@ import com.anyikang.base.BaseController;
 import com.anyikang.base.BaseResponse;
 import com.anyikang.base.Constants;
 import com.anyikang.base.ResponseMSG;
-import com.anyikang.model.Payer;
+import com.anyikang.model.User;
 import com.anyikang.model.vo.admin.UserCredentials;
-import com.anyikang.service.PaymentService;
+import com.anyikang.service.UserService;
 import com.anyikang.utils.AssertUtil;
 import com.anyikang.utils.StringRedisUtil; 
 
@@ -35,12 +35,12 @@ import com.anyikang.utils.StringRedisUtil;
  *
  */
 @RestController
-@RequestMapping("web/payer")
-public class PaymentController extends BaseController {
+@RequestMapping("web/user")
+public class UserController extends BaseController {
 	
 	
     @Autowired
-    private PaymentService paymentService;
+    private UserService userService;
     
     /**
      * 注册
@@ -52,16 +52,16 @@ public class PaymentController extends BaseController {
 	@PostMapping(value = "/register")
 	public Object register(@RequestParam("mobile") String mobile,
 			               @RequestParam("password") String password) {
-		BaseResponse<Payer> baseResponse = new BaseResponse<>();
+		BaseResponse<User> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
-		if (paymentService.findByPhone(mobile) != null) {
+		if (userService.findByPhone(mobile) != null) {
 			return new BaseResponse<Object>(ResponseMSG.ERROR, "手机号已占用！", null);
 		}
-		Payer appUser = new Payer();
+		User appUser = new User();
 		appUser.setCreateTime(new Date());
 		appUser.setMobile(mobile);
 		appUser.setPassword(password);
-		boolean flag =paymentService.insertPayer(appUser);
+		boolean flag =userService.insertUser(appUser);
 		if(flag){
 			baseResponse.setData(appUser);
 			baseResponse.setStatus(1);
@@ -95,13 +95,13 @@ public class PaymentController extends BaseController {
 //        Md5Hash md5Hash=new Md5Hash(password, userName,2);
 //        map.put("password", md5Hash.toString());
         
-        List<Payer> userList =  paymentService.selectByMap(map);
+        List<User> userList =  userService.selectByMap(map);
         AssertUtil.notEmpty(userList, "账号或密码错误");
-        String tokenId =  StringRedisUtil.get(Constants.CACHE_TOKNID+userList.get(0).getUserId());//从缓存获取token
+        String tokenId =  StringRedisUtil.get(Constants.CACHE_TOKNID+userList.get(0).getId());//从缓存获取token
         
         
         Map<String,Object> maps=new HashMap<>(); 
-        maps.put("userId", userList.get(0).getUserId());
+        maps.put("userId", userList.get(0).getId());
         maps.put("mobile", userList.get(0).getMobile());
         maps.put("password", userList.get(0).getPassword());
         maps.put("token", tokenId);
@@ -126,13 +126,13 @@ public class PaymentController extends BaseController {
 			                         @RequestParam(name = "newpw") String newpw) {
     	BaseResponse<Object> baseResponse =new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
-		Payer appUser = paymentService.findByPhone(mobile);
+		User appUser = userService.findByPhone(mobile);
 		if (appUser == null){
 			baseResponse.setStatus(0);
 			baseResponse.setMsg("您的账号未注册,请先注册");
             return  baseResponse;
 		}
-		boolean flag =paymentService.modifypwById(appUser.getUserId(), newpw);
+		boolean flag =userService.modifypwById(appUser.getId(), newpw);
         if(flag){
         	baseResponse.setStatus(1);
 			baseResponse.setMsg("您的密码修改成功");
