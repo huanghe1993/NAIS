@@ -28,20 +28,20 @@ import com.github.pagehelper.page.PageMethod;
  * @date 2018年3月7日
  */
 @RestController
-@RequestMapping("web/orders")
+@RequestMapping("web/userOrder")
 public class UserOrderController extends BaseController {
 	
     @Autowired
-    private UserOrderService ordersService;
+    private UserOrderService userOrderService;
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET})
-    public BaseResponse<?> list(int pageNum,int pageSize){
+    public BaseResponse<?> list(@RequestParam(required=true)int pageNum,@RequestParam(required=true)int pageSize){
     	
     	BaseResponse<Page<UserOrder>>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
 		
 		EntityWrapper<UserOrder> entityWrapper = new EntityWrapper<UserOrder>();
-		Page<UserOrder> page =ordersService.selectPage(new Page<UserOrder>(pageNum, pageSize), entityWrapper);
+		Page<UserOrder> page =userOrderService.selectPage(new Page<UserOrder>(pageNum, pageSize), entityWrapper);
 		if(page!=null){
 			baseResponse.setData(page);
 			baseResponse.setMsg("查询成功");
@@ -54,16 +54,16 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
     }
     
-    @RequestMapping(value = "/{ordersId}", method = {RequestMethod.GET})
-    public BaseResponse<?> view(@PathVariable("ordersId") String ordersId){
+    @RequestMapping(value = "/{id}", method = {RequestMethod.GET})
+    public BaseResponse<?> view(@PathVariable("id") String id){
     	
     	BaseResponse<UserOrder>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
     	
-    	UserOrder orders=ordersService.selectById(ordersId);
+    	UserOrder userOrder=userOrderService.selectById(id);
     	
-    	if(orders!=null){
-    		baseResponse.setData(orders);
+    	if(userOrder!=null){
+    		baseResponse.setData(userOrder);
         	baseResponse.setMsg("查询成功");
         	baseResponse.setStatus(1);
         	return baseResponse;
@@ -74,11 +74,11 @@ public class UserOrderController extends BaseController {
     }
 	
  	@RequestMapping(value ="/add", method = RequestMethod.POST)
- 	public BaseResponse<?> add(UserOrder orders) {
+ 	public BaseResponse<?> add(UserOrder userOrder) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
  		
-        boolean flags = ordersService.insert(orders);
+        boolean flags = userOrderService.insert(userOrder);
 		if(flags){
 			baseResponse.setStatus(1);
 			baseResponse.setMsg("创建成功");
@@ -89,14 +89,14 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
 	}
 
- 	@RequestMapping(value ="/updateById", method = RequestMethod.POST)
- 	public BaseResponse<?> updateById(UserOrder orders) {
+ 	@RequestMapping(value ="/update", method = RequestMethod.PUT)
+ 	public BaseResponse<?> update(UserOrder userOrder) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
         
- 		orders.setCreateTime(new Date());
+ 		userOrder.setCreateTime(new Date());
  		
-		boolean  flags=ordersService.updateById(orders);
+		boolean  flags=userOrderService.updateById(userOrder);
 		if(flags){
 			baseResponse.setStatus(1);
 			baseResponse.setMsg("更新成功");
@@ -107,12 +107,12 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
 	}
 
-    @RequestMapping(value = "/delete/{ordersId}", method = {RequestMethod.GET})
-    public BaseResponse<?> delete(@PathVariable int ordersId){
+    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.DELETE})
+    public BaseResponse<?> delete(@PathVariable int id){
     	
     	BaseResponse<String>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
-    	boolean  flags =ordersService.deleteById(ordersId);
+    	boolean  flags =userOrderService.deleteById(id);
     	if(flags){
 			 baseResponse.setMsg("删除成功");
 		     baseResponse.setStatus(1);
@@ -129,7 +129,7 @@ public class UserOrderController extends BaseController {
  		baseResponse.setTime(System.currentTimeMillis());
  		
  		List<String> idList = Arrays.asList(ids);
-		boolean  flags=ordersService.deleteBatchIds(idList);
+		boolean  flags=userOrderService.deleteBatchIds(idList);
 		if(flags){
 			baseResponse.setStatus(1);
 			baseResponse.setMsg("批量删除成功");
@@ -154,7 +154,7 @@ public class UserOrderController extends BaseController {
     	baseResponse.setTime(System.currentTimeMillis());
     	PageMethod.startPage(pageIndex, pageSize);
     	@SuppressWarnings("unchecked")
-		PageInfo<List<PayStatus>>  pageInfo =page(ordersService.queryPayStatus(deviceIMEI));
+		PageInfo<List<PayStatus>>  pageInfo =page(userOrderService.queryPayStatus(deviceIMEI));
     	if(pageInfo!=null&&pageInfo.getList().size()>0){
 			 baseResponse.setMsg("查询成功");
 		     baseResponse.setStatus(1);
@@ -179,7 +179,7 @@ public class UserOrderController extends BaseController {
 	   	baseResponse.setTime(System.currentTimeMillis());
 	   	PageMethod.startPage(pageIndex, pageSize);
 	   	@SuppressWarnings("unchecked")
-			PageInfo<List<PayList>>  pageInfo =page(ordersService.queryPayList(deviceIMEI));
+			PageInfo<List<PayList>>  pageInfo =page(userOrderService.queryPayList(deviceIMEI));
 	   	if(pageInfo!=null&&pageInfo.getList().size()>0){
 				 baseResponse.setMsg("查询成功");
 			     baseResponse.setStatus(1);
