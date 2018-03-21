@@ -89,7 +89,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
 	}
 
- 	@RequestMapping(value ="/update", method = RequestMethod.PUT)
+ 	@RequestMapping(value ="/update", method = RequestMethod.POST)
  	public BaseResponse<?> update(UserOrder userOrder) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
@@ -108,7 +108,7 @@ public class UserOrderController extends BaseController {
 	}
 
     @RequestMapping(value = "/delete/{id}", method = {RequestMethod.DELETE})
-    public BaseResponse<?> delete(@PathVariable int id){
+    public BaseResponse<?> delete(@PathVariable String id){
     	
     	BaseResponse<String>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
