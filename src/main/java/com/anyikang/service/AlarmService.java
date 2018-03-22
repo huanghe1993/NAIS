@@ -21,6 +21,6 @@ public interface AlarmService {
 	 * @param alarmId
 	 * @return
 	 */
-	public boolean updateIsCall(String alarmId);
+	public boolean updateIsCall(String alarmId, int isCall);
 
 }

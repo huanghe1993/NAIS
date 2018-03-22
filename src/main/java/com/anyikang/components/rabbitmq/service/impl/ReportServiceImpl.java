@@ -75,8 +75,8 @@ public class ReportServiceImpl implements ReportService {
 			vo.setLocationTime(DateUtil.stringToDate(params.get("reportTime").toString()));
 		}
 		
-		if(params.containsKey("electricity")){
-			vo.setLocationElectricity(Integer.valueOf(params.get("electricity").toString()));
+		if(params.containsKey("power")){
+			vo.setLocationElectricity(Integer.valueOf(params.get("power").toString()));
 		}
 		vo.setServerTime(new Date());
 		vo.setLocationId(UUID.randomUUID().toString());
@@ -88,8 +88,8 @@ public class ReportServiceImpl implements ReportService {
 		     vo.setLocationAltitude(Float.valueOf(params.get("altitude").toString()));
 			 vo.setLocationDirection(Float.valueOf(params.get("direction").toString()));
 			 vo.setLocationType(1);
-			 vo.setLocationLatitude(IEEE754Utils.stringTofloat(Float.valueOf(params.get("latitude").toString())));
-			 vo.setLocationLongitude(IEEE754Utils.stringTofloat(Float.valueOf(params.get("longitude").toString())));
+			 vo.setLocationLatitude(Float.valueOf(params.get("latitude").toString()));
+			 vo.setLocationLongitude(Float.valueOf(params.get("longitude").toString()));
 			 break;
 		case "V":
 		    int wifi=0;
@@ -255,7 +255,7 @@ public class ReportServiceImpl implements ReportService {
 			device.setOnlineTime(DateUtil.stringToDate(reportTime));
 		}
 		if(params.containsKey("power")){
-			device.setDevicePower(Integer.valueOf(params.get("power").toString(), 16));
+			device.setDevicePower(Integer.valueOf(params.get("power").toString()));
 		}
 		
 		try {

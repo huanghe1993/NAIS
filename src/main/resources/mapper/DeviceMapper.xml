@@ -321,21 +321,22 @@
 	        WHERE  emergency_id=#{emergencyId}
      </delete>
      <select id="queryAlarmRecord" parameterType="String" resultType="map">
-           SELECT
+            SELECT
 				     d.imei_code as deviceIMEI,
 				     CONCAT(o.surname,o.`name`) as name,
 				     a.alarm_addr as  alarmAddress,
-				     (CASE a.alarm_type WHEN 2 then '低电报警' WHEN 1 then 'sos报警' WHEN 3 then '蓝牙断开报警' END) as alarm,
+				     (CASE a.alarm_type WHEN 2 then '低电报警'     WHEN 1 then 'sos报警'    WHEN 3 then '蓝牙断开报警' END) as alarm,
 				     a.alarm_time,
-				     (CASE a.is_call WHEN 1 then '未通知家属救援' WHEN 2 then '已经通知亲人救援' ELSE '无需处理' END) as rescueStatus
+				     (CASE a.is_call    WHEN 1 then '未通知亲人救援' WHEN 2 then '已通知亲人救援' WHEN 3 then '亲人已救援完成 ' ELSE '无需处理' END) as rescueStatus
 			FROM     device d,old_man o,location l,alarm a
 			WHERE    d.device_id=o.device_id
 			AND      d.device_id=l.device_id
 			AND      l.location_id=a.location_id
-	        <if test="_parameter!=null">
+            AND      (a.alarm_type>1 OR (a.alarm_type=1 AND  a.is_call>0))
+            <if test="_parameter!=null">
 	        AND      d.imei_code=#{deviceIMEI}
 	        </if>
-            ORDER BY a.alarm_time DESC
+            ORDER BY a.alarm_type,a.is_call,a.alarm_time DESC
      </select>
      
      <select id="findParentPhones" parameterType="String" resultType="map">

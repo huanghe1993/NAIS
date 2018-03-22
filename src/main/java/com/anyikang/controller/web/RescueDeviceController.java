@@ -246,10 +246,9 @@ public class RescueDeviceController extends BaseController{
      * @return
      */
     @GetMapping("update/alarmStatus")
-    public BaseResponse<?> updateIsCall(String alarmId) {
+    public BaseResponse<?> updateIsCall(String alarmId,int isCall) {
     	BaseResponse<PageInfo<List<Map<String,Object>>>> responseMessage = new BaseResponse<>();
-    
-		
+    	responseMessage.setTime(System.currentTimeMillis());
     	if(alarmId==null){
     		responseMessage.setMsg("参数不允许为空");
     		responseMessage.setStatus(0);
@@ -260,7 +259,7 @@ public class RescueDeviceController extends BaseController{
     		responseMessage.setStatus(0);
     		return responseMessage;
     	}
-    	boolean flag =alarmService.updateIsCall(alarmId);
+    	boolean flag =alarmService.updateIsCall(alarmId,isCall);
     	if(flag){
     		responseMessage.setMsg("确认成功");
     		responseMessage.setStatus(1);

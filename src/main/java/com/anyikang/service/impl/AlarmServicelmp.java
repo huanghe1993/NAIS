@@ -1,5 +1,6 @@
 package com.anyikang.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,14 @@ public class AlarmServicelmp implements AlarmService{
 		return null;
 	}
 	@Override
-	public boolean updateIsCall(String alarmId) {
-		int n =alarmMapper.updateRscueType(alarmId);
+	public boolean updateIsCall(String alarmId, int isCall) {
+		Map<String,Object> params =new HashMap<>();
+		if(alarmId==null){
+			return false;
+		}
+		params.put("alarmId", alarmId);
+		params.put("isCall", isCall);
+		int n =alarmMapper.updateRscueType(params);
 		return n==1;
 	}
 }

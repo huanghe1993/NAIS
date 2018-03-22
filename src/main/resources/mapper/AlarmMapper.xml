@@ -35,24 +35,24 @@
     </insert>
     
     <select id="findAlarmByImei"  parameterType="String" resultType="map">
-           SELECT
+           SELECT	
 			      a.alarm_id as alarmId
 			from  alarm a,device d,location l
 			WHERE a.location_id=l.location_id
             and   l.device_id=d.device_id
-			and   a.is_call=1
+			and   (a.is_call=1 or a.is_call=2)
 			and   d.imei_code=#{deviceIMEI}
     </select>
     
-        <update id="updateRscueType" parameterType="String"> 
+    <update id="updateRscueType" parameterType="map"> 
             UPDATE
                   alarm a 
-            SET   a.is_call=2
+            SET   a.is_call=#{isCall}
             WHERE a.alarm_id=#{alarmId}
     </update>
 
     <select id="getAllSos" resultType="map">
-        SELECT
+       SELECT
 		      d.device_id  as deviceId,
 		      d.imei_code  as deviceIMEI,
 		      l.latitude   as latitude, 
@@ -64,6 +64,8 @@
 		FROM  device d,location l,alarm a
 		WHERE d.device_id=l.device_id
 		AND   l.location_id=a.location_id
-		AND   (a.is_call=1 OR a.is_call=2)
+		AND   a.is_call>0
+		AND   a.alarm_time>DATE_SUB(NOW(),INTERVAL 24 HOUR)
+		ORDER BY a.is_call,a.alarm_time DESC
     </select>
 </mapper>

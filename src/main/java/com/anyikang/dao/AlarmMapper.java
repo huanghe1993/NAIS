@@ -32,7 +32,7 @@ public interface AlarmMapper {
 	 * @param imeiCode
 	 * @return
 	 */
-	public int updateRscueType(String alarmId);
+	public int updateRscueType(Map<String,Object> params);
 
 	/**
 	 * 查询所有报警信息
