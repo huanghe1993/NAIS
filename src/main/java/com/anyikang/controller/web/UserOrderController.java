@@ -6,9 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +36,7 @@ public class UserOrderController extends BaseController {
     @Autowired
     private UserOrderService userOrderService;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.GET})
+    @GetMapping(value = "/list")
     public BaseResponse<?> list(@RequestParam(required=true)int pageNum,@RequestParam(required=true)int pageSize){
     	
     	BaseResponse<Page<UserOrder>>  baseResponse = new BaseResponse<>();
@@ -54,7 +56,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
     }
     
-    @RequestMapping(value = "/{id}", method = {RequestMethod.GET})
+    @GetMapping(value = "/{id}")
     public BaseResponse<?> view(@PathVariable("id") String id){
     	
     	BaseResponse<UserOrder>  baseResponse = new BaseResponse<>();
@@ -73,7 +75,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
     }
 	
- 	@RequestMapping(value ="/add", method = RequestMethod.POST)
+ 	@PostMapping(value ="/add")
  	public BaseResponse<?> add(UserOrder userOrder) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
@@ -89,7 +91,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
 	}
 
- 	@RequestMapping(value ="/update", method = RequestMethod.POST)
+ 	@PostMapping(value ="/update")
  	public BaseResponse<?> update(UserOrder userOrder) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
@@ -107,7 +109,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
 	}
 
-    @RequestMapping(value = "/delete/{id}", method = {RequestMethod.DELETE})
+    @DeleteMapping(value = "/delete/{id}")
     public BaseResponse<?> delete(@PathVariable String id){
     	
     	BaseResponse<String>  baseResponse = new BaseResponse<>();
@@ -123,7 +125,7 @@ public class UserOrderController extends BaseController {
 		return baseResponse;
     }
     
- 	@RequestMapping(value ="/deletes", method = RequestMethod.POST)
+ 	@PostMapping(value ="/deletes")
  	public BaseResponse<?> deletes(String[] ids) {
  		BaseResponse<String> baseResponse = new BaseResponse<>();
  		baseResponse.setTime(System.currentTimeMillis());
@@ -148,7 +150,7 @@ public class UserOrderController extends BaseController {
  	 * @param deviceIMEI
  	 * @return
  	 */
- 	@RequestMapping(value = "/queryPayStatus", method = {RequestMethod.GET})
+ 	@GetMapping(value = "/queryPayStatus")
     public BaseResponse<?> queryPayStatus(int pageSize,int pageIndex, @RequestParam(required=false) String deviceIMEI){
     	BaseResponse<PageInfo<List<PayStatus>>>  baseResponse = new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
@@ -173,7 +175,7 @@ public class UserOrderController extends BaseController {
 	  * @param deviceIMEI
 	  * @return
 	  */
-    @RequestMapping(value = "/queryPayList", method = {RequestMethod.GET})
+    @GetMapping(value = "/queryPayList")
     public BaseResponse<?> queryPayList(int pageSize,int pageIndex, @RequestParam(required=false) String deviceIMEI){
 	   	BaseResponse<PageInfo<List<PayList>>>  baseResponse = new BaseResponse<>();
 	   	baseResponse.setTime(System.currentTimeMillis());
