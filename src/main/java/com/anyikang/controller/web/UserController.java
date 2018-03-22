@@ -27,13 +27,6 @@ import com.anyikang.utils.AssertUtil;
 import com.anyikang.utils.StringRedisUtil; 
 
 
-
-/**
- * 支付业务处理
- * @author LvXiaoxiong
- * @date 2017/08/25
- *
- */
 @RestController
 @RequestMapping("web/user")
 public class UserController extends BaseController {
@@ -57,17 +50,17 @@ public class UserController extends BaseController {
 		if (userService.findByPhone(mobile) != null) {
 			return new BaseResponse<Object>(ResponseMSG.ERROR, "手机号已占用！", null);
 		}
-		User appUser = new User();
-		appUser.setCreateTime(new Date());
-		appUser.setMobile(mobile);
-		appUser.setPassword(password);
-		boolean flag =userService.insertUser(appUser);
+		User user = new User();
+		user.setCreateTime(new Date());
+		user.setMobile(mobile);
+		user.setPassword(password);
+		boolean flag =userService.insertUser(user);
 		if(flag){
-			baseResponse.setData(appUser);
+			baseResponse.setData(user);
 			baseResponse.setStatus(1);
 			return baseResponse;
 		}
-		baseResponse.setData(appUser);
+		baseResponse.setData(user);
 		baseResponse.setStatus(0);
 		return baseResponse;
 	}
@@ -81,7 +74,7 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping(value = "/login")
-    public BaseResponse<?> appUserLogin(HttpServletRequest request,String userName, String password){
+    public BaseResponse<?> userLogin(HttpServletRequest request,String userName, String password){
     	BaseResponse<UserCredentials> responseMessage = new BaseResponse<>();
     	responseMessage.setTime(System.currentTimeMillis());
         if(userName == null||password==null ){
@@ -101,7 +94,7 @@ public class UserController extends BaseController {
         
         
         Map<String,Object> maps=new HashMap<>(); 
-        maps.put("userId", userList.get(0).getId());
+        maps.put("id", userList.get(0).getId());
         maps.put("mobile", userList.get(0).getMobile());
         maps.put("password", userList.get(0).getPassword());
         maps.put("token", tokenId);
@@ -126,13 +119,13 @@ public class UserController extends BaseController {
 			                         @RequestParam(name = "newpw") String newpw) {
     	BaseResponse<Object> baseResponse =new BaseResponse<>();
     	baseResponse.setTime(System.currentTimeMillis());
-		User appUser = userService.findByPhone(mobile);
-		if (appUser == null){
+		User user = userService.findByPhone(mobile);
+		if (user == null){
 			baseResponse.setStatus(0);
 			baseResponse.setMsg("您的账号未注册,请先注册");
             return  baseResponse;
 		}
-		boolean flag =userService.modifypwById(appUser.getId(), newpw);
+		boolean flag =userService.modifypwById(user.getId(), newpw);
         if(flag){
         	baseResponse.setStatus(1);
 			baseResponse.setMsg("您的密码修改成功");
