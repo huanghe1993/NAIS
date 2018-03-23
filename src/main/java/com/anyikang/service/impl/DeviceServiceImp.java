@@ -118,6 +118,9 @@ public class DeviceServiceImp implements DeviceService {
 			map.put("endTime", Timestamp.valueOf(endTime));
 		}
 		List<Map<String, Object>> list =deviceMapper.queryOrbit(map);
+		if(list==null||list.size()==0){
+			return null;
+		}
 		if(!list.isEmpty()){
 			return list;
 		}
@@ -130,7 +133,7 @@ public class DeviceServiceImp implements DeviceService {
 	public  List<LocatorDeviceStatus> queryDeviceStatusMessage(String deviceImei) {
 		
 		 List<LocatorDeviceStatus> list =deviceMapper.queryDeviceStatus(deviceImei);
-		 if(list.isEmpty()||list==null){
+		 if(list==null||list.isEmpty()){
 			 return null;
 		 }
 		 return list;

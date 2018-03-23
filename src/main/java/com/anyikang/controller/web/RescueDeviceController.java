@@ -176,7 +176,7 @@ public class RescueDeviceController extends BaseController{
     public BaseResponse<?> queryOrbit(@RequestBody Map<String,Object> map) {
     	BaseResponse<List<Map<String,Object>>> responseMessage = new BaseResponse<>();
     	List<Map<String,Object>> list =deviceService.queryOrbits(map);
-    	if(list.size()==0||list==null){
+    	if(list==null||list.size()==0){
     		responseMessage.setMsg("无轨迹信息");
     		responseMessage.setStatus(0);
     		return responseMessage;

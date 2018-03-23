@@ -24,7 +24,6 @@ import com.anyikang.model.Alarm;
 import com.anyikang.model.vo.RescueDevice;
 import com.anyikang.model.vo.VoLocation;
 import com.anyikang.utils.DateUtil;
-import com.anyikang.utils.IEEE754Utils;
 import com.anyikang.utils.LngLat;
 import com.anyikang.utils.MapAPIUtil;
 import com.anyikang.utils.WifLbsUtil;
@@ -84,12 +83,13 @@ public class ReportServiceImpl implements ReportService {
 		switch(gpsValid){
 		
 		case "A":
-			 vo.setLocationSpeed(Float.valueOf(params.get("speed").toString()));
-		     vo.setLocationAltitude(Float.valueOf(params.get("altitude").toString()));
-			 vo.setLocationDirection(Float.valueOf(params.get("direction").toString()));
+			 vo.setLocationSpeed(params.get("speed").toString());
+		     vo.setLocationAltitude(params.get("altitude").toString());
+			 vo.setLocationDirection(params.get("direction").toString());
 			 vo.setLocationType(1);
-			 vo.setLocationLatitude(Float.valueOf(params.get("latitude").toString()));
-			 vo.setLocationLongitude(Float.valueOf(params.get("longitude").toString()));
+			 vo.setLocationLatitude(params.get("latitude").toString());
+			 vo.setLocationLongitude(params.get("longitude").toString());
+			 System.err.println(vo.getLocationLatitude()+"============="+vo.getLocationLongitude());
 			 break;
 		case "V":
 		    int wifi=0;
@@ -136,15 +136,15 @@ public class ReportServiceImpl implements ReportService {
 				vo.setLocationType(3);
 			}
 			LngLat gps = WifLbsUtil.gaodeMixture_to_bd09(0, imeiCode, smac, 0, bts, nearbts, macs);
-			vo.setLocationLatitude((float)gps.getLantitude());
-			vo.setLocationLongitude((float)gps.getLongitude());
+			vo.setLocationLatitude(String.valueOf(gps.getLantitude()));
+			vo.setLocationLongitude(String.valueOf(gps.getLongitude()));
 			break;
 		default:
 			logger.info("============存储失败，无数据=============");
 			return false;
     }
 
-		if(vo.getLocationLatitude()==0||vo.getLocationLongitude()==0){
+		if(Double.valueOf(vo.getLocationLatitude())==0||Double.valueOf(vo.getLocationLongitude())==0){
 			return false;
 		}		
 	     
@@ -186,7 +186,7 @@ public class ReportServiceImpl implements ReportService {
 					al.setIsCall(1);
 				}
     			 //经纬度转换为地址信息
-    			 Map<String,String> maps = MapAPIUtil.toAddr(vo.getLocationLatitude(),vo.getLocationLongitude());
+    			 Map<String,String> maps = MapAPIUtil.toAddr(Double.valueOf(vo.getLocationLatitude()),Double.valueOf(vo.getLocationLongitude()));
     			 String formatted_address = maps.get("formatted_address").toString();	
 	    		 al.setAlarmAddr(formatted_address);	
 	    	

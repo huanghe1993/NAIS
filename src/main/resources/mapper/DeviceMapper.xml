@@ -29,6 +29,7 @@
     
     <select id="getAllDevices" resultType="map">
          SELECT 
+                    DISTINCT
 					t2.device_id as deviceId,
 					t1.NAME,
 					t1.mobile,
@@ -212,7 +213,6 @@
 		        l.location_type as locationType,
 		        l.longitude as  locationLongitude,
 		        l.latitude  as  locationLatitude
-
 		  FROM  device d,location l
 		  WHERE l.device_id=d.device_id
 		  and   d.imei_code=#{deviceImei}

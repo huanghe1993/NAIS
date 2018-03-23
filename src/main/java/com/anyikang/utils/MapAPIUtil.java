@@ -418,7 +418,7 @@ public class MapAPIUtil {
 	 * @param lng
 	 * @return formatted_address:地址；district：所在区
 	 */
-	public static Map<String,String> toAddr(float lat,float lng){
+	public static Map<String,String> toAddr(double lat,double lng){
 		StringBuffer sb=new StringBuffer(GEOCODER_URL);
 		sb.append("?ak=").append(AK);
 		sb.append("&mcode=").append(MCODE);
