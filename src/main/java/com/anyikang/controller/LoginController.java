@@ -52,7 +52,7 @@ public class LoginController {
 //        map.put("user_password", password);
         
       //加密后进行匹配
-        Md5Hash md5Hash=new Md5Hash(password, userName,2);
+        Md5Hash md5Hash=new Md5Hash(password);
         map.put("user_password", md5Hash.toString());
         
         List<AdminUser> userList =  adminUserService.selectByMap(map);

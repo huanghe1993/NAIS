@@ -1,4 +1,4 @@
-package com.anyikang.components.shiro;
+  package com.anyikang.components.shiro;
 
 import com.anyikang.model.admin.AdminUser;
 

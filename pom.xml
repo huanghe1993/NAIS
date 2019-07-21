@@ -195,7 +195,8 @@
 	 <dependency>
          <groupId>com.alipay</groupId>
          <artifactId>sdk-java</artifactId>
-         <version>20180104135026</version>
+     <version>20180309170622</version>
+
    </dependency>
      <dependency>
 		  <groupId>org.jdom</groupId>

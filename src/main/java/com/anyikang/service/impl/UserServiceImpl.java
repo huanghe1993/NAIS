@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 	 * @see com.anyikang.service.PaymentService#modifypwById(int, java.lang.String)
 	 */
 	@Override
-	public boolean modifypwById(String id, String newpw) {
+	public boolean  modifypwById(String id, String newpw) {
 		Map<String,Object> params = new HashMap<>();
 		params.put("id", id);
 		params.put("newpw", newpw);

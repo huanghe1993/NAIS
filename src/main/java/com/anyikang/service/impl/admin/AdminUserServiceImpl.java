@@ -82,13 +82,15 @@ public class AdminUserServiceImpl  extends ServiceImpl<AdminUserMapper, AdminUse
     public int update(UserVo userVo) {
         logger.info("userVo=" + userVo.toString());
         AdminUser adminUser = new AdminUser();
-        if(!userVo.getUserName().equals(userVo.getOriginalUserName())){
+        if(StringUtils.isNotEmpty(userVo.getUserName())&&!userVo.getUserName().equals(userVo.getOriginalUserName())){
             adminUser.setUserName(userVo.getUserName());
         }
 //        adminUser.setUserPassword(userVo.getUserPassword());
-        Md5Hash md5Hash=new Md5Hash(userVo.getUserPassword(), userVo.getUserName(),2);
-        adminUser.setUserPassword(md5Hash.toString());
-        
+        if(StringUtils.isNotEmpty(userVo.getUserPassword())){
+        	 Md5Hash md5Hash=new Md5Hash(userVo.getUserPassword());
+             adminUser.setUserPassword(md5Hash.toString());
+        }
+                
         adminUser.setNickName(userVo.getNickName());
         adminUser.setCreateTime(new Date());
         adminUser.setUserId(userVo.getUsersId());

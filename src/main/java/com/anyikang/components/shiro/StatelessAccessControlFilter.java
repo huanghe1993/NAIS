@@ -1,12 +1,11 @@
 package com.anyikang.components.shiro;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-
+import com.anyikang.base.BaseResponse;
+import com.anyikang.base.Constants;
+import com.anyikang.exception.MyException;
+import com.anyikang.utils.AssertUtil;
+import com.anyikang.utils.StringRedisUtil;
+import com.anyikang.utils.WebUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -16,13 +15,11 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.anyikang.base.Constants;
-import com.anyikang.base.BaseResponse;
-import com.anyikang.exception.MyException;
-import com.anyikang.utils.AssertUtil;
-import com.anyikang.utils.StringRedisUtil;
-import com.anyikang.utils.TokenUtil;
-import com.anyikang.utils.WebUtil;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 访问控制过滤器
@@ -73,7 +70,7 @@ public class StatelessAccessControlFilter extends AccessControlFilter {
 			// 4、如当前URL匹配拦截器名字（URL模式）
 			if (requestURL.endsWith("login")) {// 如为登陆，就只对密码进行加密
 				//加密后进行匹配
-		        Md5Hash md5Hash=new Md5Hash(password, username,2);
+		        Md5Hash md5Hash=new Md5Hash(password);
 		        password= md5Hash.toString();
 				AssertUtil.notEmpty(username, "用户名不能为空.");
 				token.setClientDigest(password);

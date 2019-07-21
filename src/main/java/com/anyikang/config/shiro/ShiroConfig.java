@@ -44,9 +44,12 @@ public class ShiroConfig {
     @Value("${spring.redis.port}")
     private int port;
 
-   // @Value("${spring.redis.password}")
-    //private String pwd;
-    
+    @Value("${spring.redis.shiro.timeout}")
+    private int timeout;
+
+    @Value("${spring.redis.shiro.password}")
+    private String password;
+
     @Autowired
     private MyShiroRealm myShiroRealm;
     
@@ -54,21 +57,25 @@ public class ShiroConfig {
     
     /**
      * ShiroFilterFactoryBean 处理拦截资源文件问题。
-     * 注意：单独一个ShiroFilterFactoryBean配置是或报错的，以为在
-     * 初始化ShiroFilterFactoryBean的时候需要注入：SecurityManager
      *
-     * Filter Chain定义说明 1、一个URL可以配置多个Filter，使用逗号分隔 2、当设置多个过滤器时，全部验证通过，才视为通过
+     * Filter Chain定义说明
+     * 1、一个URL可以配置多个Filter，使用逗号分隔
+     * 2、当设置多个过滤器时，全部验证通过，才视为通过
      * 3、部分过滤器可指定参数，如perms，roles
      *
+     * Shiro内置的FilterChain
+     * 1、anon:所有url都都可以匿名访问
+     * 2、authc: 需要认证才能进行访问
+     * 3、user:配置记住我或认证通过可以访问
+     *
      */
-    @Bean(name="shirFilter")
-    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
+    @Bean(name="shiroFilter")
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         logger.info("ShiroConfiguration.shirFilter()");
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
-        // 必须设置 SecurityManager
+        //Shiro的核心安全接口, 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/login");
         // 登录成功后要跳转的链接
@@ -80,25 +87,19 @@ public class ShiroConfig {
 
         // 拦截器.
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
-        //// 配置不会被拦截的链接 顺序判断
-        //filterChainDefinitionMap.put("/js/**", "anon");
+        // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/index.html", "anon");
         filterChainDefinitionMap.put("/deng", "anon");
-        //filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/web/**", "anon");
-        //filterChainDefinitionMap.put("/add", "perms[权限添加]");
-//        filterChainDefinitionMap.put("/anyikang/app1", "anon");
-        //
-        //// <!-- 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边 -->:这是一个坑呢，一不小心代码就不好使了;
-        filterChainDefinitionMap.put("/favicon.ico",  "anon");
         filterChainDefinitionMap.put("/**",  "statelessAuthc");
+
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         //自定义拦截器
         Map<String, Filter> filtersMap = new LinkedHashMap<String, Filter>();
         //限制同一帐号同时在线的个数。
-       // filtersMap.put("kickout", kickoutSessionControlFilter());
+        // filtersMap.put("kickout", kickoutSessionControlFilter());
         //shiroFilterFactoryBean.setFilters(filtersMap);
         System.out.println("Shiro拦截器工厂类注入成功");
         return shiroFilterFactoryBean;
@@ -113,9 +114,7 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-
         securityManager.setSubjectFactory(new StatelessDefaultSubjectFactory());
-
         // 设置realm.
         securityManager.setRealm(myShiroRealm);
         // 自定义缓存实现 使用redis
@@ -124,7 +123,6 @@ public class ShiroConfig {
         securityManager.setSessionManager(sessionManager());
         //注入记住我管理器;
         //securityManager.setRememberMeManager(rememberMeManager());
-
 
         /*
          * 禁用使用Sessions 作为存储策略的实现，但它没有完全地禁用Sessions
@@ -145,7 +143,6 @@ public class ShiroConfig {
      */
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher(){
-        //HashedCredentialsMatcher hashedCredentialsMatcher = new RetryLimitHashedCredentialsMatcher(cacheManager());
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("md5");//散列算法:这里使用MD5算法;
         hashedCredentialsMatcher.setHashIterations(2);//散列的次数，比如散列两次，相当于 md5(md5(""));

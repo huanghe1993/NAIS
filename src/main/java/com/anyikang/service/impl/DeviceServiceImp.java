@@ -110,7 +110,7 @@ public class DeviceServiceImp implements DeviceService {
 			String startTime =map.get("startTime").toString();
 			map.put("startTime", Timestamp.valueOf(startTime));
 		}else{
-			long time =new Date().getTime()-24*60*60*1000L;
+			long time =new Date().getTime()-12*60*60*1000L;
 			map.put("startTime", new Timestamp(time));
 		}
 		if(map.containsKey("endTime")){
@@ -144,7 +144,6 @@ public class DeviceServiceImp implements DeviceService {
 	@Override
 	public boolean addEmergency(String phone1, String phone2, String phone3, String phone4, String phone5, String oldManId) {
 		List<Map<String,Object>> phoneList = new LinkedList<>();
-		
 		if(phone1!=null&&phone1.trim().length()!=0){
 			Map<String,Object> map =new LinkedHashMap<>();
 			String phoneId =UUID.randomUUID().toString();
